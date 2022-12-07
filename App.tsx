@@ -8,18 +8,22 @@
  * @format
  */
 
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   useColorScheme,
-  View,
 } from 'react-native';
-
 import { Colors } from 'react-native/Libraries/NewAppScreen';
+
+import LoginPage from './components/LoginPage';
+import HomePage from './components/HomePage';
+import HistoryPage from './components/HistoryPage';
+import ProfilePage from './components/ProfilePage';
+
+const Stack = createNativeStackNavigator();
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -29,22 +33,15 @@ const App = () => {
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <NavigationContainer>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <Stack.Navigator>
+        <Stack.Screen name="Login" component={LoginPage} />
+        <Stack.Screen name="Home" component={HomePage} />
+        <Stack.Screen name="History" component={HistoryPage} />
+        <Stack.Screen name="Profile" component={ProfilePage} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
