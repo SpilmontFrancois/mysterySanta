@@ -1,13 +1,7 @@
 import React, {useState} from 'react';
-import {
-  Alert,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Alert, SafeAreaView, StyleSheet, TextInput, View} from 'react-native';
 import {supabase} from '../lib/supabase';
+import Button from './ui/Button';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -37,41 +31,52 @@ export default function LoginPage() {
   }
 
   return (
-    <View>
+    <SafeAreaView>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <TextInput
-          onChangeText={text => setEmail(text)}
+          onChangeText={setEmail}
           value={email}
           placeholder="email@address.com"
           autoCapitalize={'none'}
           autoComplete={'email'}
+          style={styles.input}
         />
       </View>
       <View style={styles.verticallySpaced}>
         <TextInput
-          onChangeText={text => setPassword(text)}
+          onChangeText={setPassword}
           value={password}
           secureTextEntry={true}
           placeholder="Password"
           autoCapitalize={'none'}
           autoComplete={'password'}
+          style={styles.input}
         />
       </View>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <TouchableOpacity disabled={loading} onPress={() => signInWithEmail()}>
-          <Text>Sign in</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.verticallySpaced}>
-        <TouchableOpacity disabled={loading} onPress={() => signUpWithEmail()}>
-          <Text>Sign up</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+
+      <Button
+        style={{marginBottom: 16}}
+        text={'Sign in'}
+        disabled={loading}
+        onPress={() => signInWithEmail()}
+      />
+      <Button
+        disabled={loading}
+        onPress={() => signUpWithEmail()}
+        text={'Sign up'}
+        secondary
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
   container: {
     marginTop: 40,
     padding: 12,

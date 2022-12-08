@@ -10,7 +10,7 @@
 
 import {NavigationContainer} from '@react-navigation/native';
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {StatusBar, StyleSheet} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomePage from './components/HomePage';
@@ -22,39 +22,59 @@ import {
   faHouse,
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
+import {Session} from '@supabase/supabase-js';
+import {supabase} from './lib/supabase';
+import LoginPage from './components/LoginPage';
 
 const Tab = createBottomTabNavigator();
 
 const App = () => {
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({data: {session: _session}}) => {
+      setSession(_session);
+    });
+
+    supabase.auth.onAuthStateChange((_event, _session) => {
+      setSession(_session);
+    });
+  }, []);
+
+  console.log(session);
   return (
     <NavigationContainer>
       <StatusBar />
-      <Tab.Navigator initialRouteName={'Home'}>
-        <Tab.Screen
-          name={'homePage'}
-          component={HomePage}
-          options={{
-            title: 'Home',
-            tabBarIcon: () => <FontAwesomeIcon icon={faHouse} />,
-          }}
-        />
-        <Tab.Screen
-          name={'history'}
-          component={HistoryPage}
-          options={{
-            title: 'History',
-            tabBarIcon: () => <FontAwesomeIcon icon={faClockRotateLeft} />,
-          }}
-        />
-        <Tab.Screen
-          name={'profile'}
-          component={ProfilePage}
-          options={{
-            title: 'Profile',
-            tabBarIcon: () => <FontAwesomeIcon icon={faUser} />,
-          }}
-        />
-      </Tab.Navigator>
+      {session ? (
+        <Tab.Navigator initialRouteName={'Home'}>
+          <Tab.Screen
+            name={'homePage'}
+            component={HomePage}
+            options={{
+              title: 'Home',
+              tabBarIcon: () => <FontAwesomeIcon icon={faHouse} />,
+            }}
+          />
+          <Tab.Screen
+            name={'history'}
+            component={HistoryPage}
+            options={{
+              title: 'History',
+              tabBarIcon: () => <FontAwesomeIcon icon={faClockRotateLeft} />,
+            }}
+          />
+          <Tab.Screen
+            name={'profile'}
+            component={ProfilePage}
+            options={{
+              title: 'Profile',
+              tabBarIcon: () => <FontAwesomeIcon icon={faUser} />,
+            }}
+          />
+        </Tab.Navigator>
+      ) : (
+        <LoginPage />
+      )}
     </NavigationContainer>
   );
 };
