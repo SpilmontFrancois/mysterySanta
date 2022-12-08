@@ -8,22 +8,22 @@
  * @format
  */
 
-import {NavigationContainer} from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 
-import React, {useEffect, useState} from 'react';
-import {StatusBar, StyleSheet} from 'react-native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import React, { useEffect, useState } from 'react';
+import { StatusBar, StyleSheet } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomePage from './components/HomePage';
 import HistoryPage from './components/HistoryPage';
 import ProfilePage from './components/ProfilePage';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
   faClockRotateLeft,
   faHouse,
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
-import {Session} from '@supabase/supabase-js';
-import {supabase} from './lib/supabase';
+import { Session } from '@supabase/supabase-js';
+import { supabase } from './lib/supabase';
 import LoginPage from './components/LoginPage';
 
 const Tab = createBottomTabNavigator();
@@ -32,7 +32,7 @@ const App = () => {
   const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({data: {session: _session}}) => {
+    supabase.auth.getSession().then(({ data: { session: _session } }) => {
       setSession(_session);
     });
 
@@ -53,6 +53,7 @@ const App = () => {
             options={{
               title: 'Home',
               tabBarIcon: () => <FontAwesomeIcon icon={faHouse} />,
+              headerShown: false,
             }}
           />
           <Tab.Screen
@@ -61,6 +62,7 @@ const App = () => {
             options={{
               title: 'History',
               tabBarIcon: () => <FontAwesomeIcon icon={faClockRotateLeft} />,
+              headerShown: false,
             }}
           />
           <Tab.Screen
