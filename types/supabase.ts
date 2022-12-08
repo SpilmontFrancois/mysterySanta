@@ -12,6 +12,198 @@ export interface paths {
       };
     };
   };
+  '/events': {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.events.id'];
+          end_date?: parameters['rowFilter.events.end_date'];
+          /** Filtering Columns */
+          select?: parameters['select'];
+          /** Ordering */
+          order?: parameters['order'];
+          /** Limiting and Pagination */
+          offset?: parameters['offset'];
+          /** Limiting and Pagination */
+          limit?: parameters['limit'];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters['range'];
+          /** Limiting and Pagination */
+          'Range-Unit'?: parameters['rangeUnit'];
+          /** Preference */
+          Prefer?: parameters['preferCount'];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions['events'][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** events */
+          events?: definitions['events'];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters['select'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.events.id'];
+          end_date?: parameters['rowFilter.events.end_date'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.events.id'];
+          end_date?: parameters['rowFilter.events.end_date'];
+        };
+        body: {
+          /** events */
+          events?: definitions['events'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  '/participations': {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.participations.id'];
+          user1_id?: parameters['rowFilter.participations.user1_id'];
+          user2_id?: parameters['rowFilter.participations.user2_id'];
+          user1_hasPresent?: parameters['rowFilter.participations.user1_hasPresent'];
+          user2_hasPresent?: parameters['rowFilter.participations.user2_hasPresent'];
+          event_id?: parameters['rowFilter.participations.event_id'];
+          /** Filtering Columns */
+          select?: parameters['select'];
+          /** Ordering */
+          order?: parameters['order'];
+          /** Limiting and Pagination */
+          offset?: parameters['offset'];
+          /** Limiting and Pagination */
+          limit?: parameters['limit'];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters['range'];
+          /** Limiting and Pagination */
+          'Range-Unit'?: parameters['rangeUnit'];
+          /** Preference */
+          Prefer?: parameters['preferCount'];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions['participations'][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** participations */
+          participations?: definitions['participations'];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters['select'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.participations.id'];
+          user1_id?: parameters['rowFilter.participations.user1_id'];
+          user2_id?: parameters['rowFilter.participations.user2_id'];
+          user1_hasPresent?: parameters['rowFilter.participations.user1_hasPresent'];
+          user2_hasPresent?: parameters['rowFilter.participations.user2_hasPresent'];
+          event_id?: parameters['rowFilter.participations.event_id'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters['rowFilter.participations.id'];
+          user1_id?: parameters['rowFilter.participations.user1_id'];
+          user2_id?: parameters['rowFilter.participations.user2_id'];
+          user1_hasPresent?: parameters['rowFilter.participations.user1_hasPresent'];
+          user2_hasPresent?: parameters['rowFilter.participations.user2_hasPresent'];
+          event_id?: parameters['rowFilter.participations.event_id'];
+        };
+        body: {
+          /** participations */
+          participations?: definitions['participations'];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters['preferReturn'];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   '/interests': {
     get: {
       parameters: {
@@ -116,6 +308,7 @@ export interface paths {
           budget?: parameters['rowFilter.profiles.budget'];
           address?: parameters['rowFilter.profiles.address'];
           interests?: parameters['rowFilter.profiles.interests'];
+          waiting_list?: parameters['rowFilter.profiles.waiting_list'];
           /** Filtering Columns */
           select?: parameters['select'];
           /** Ordering */
@@ -173,6 +366,7 @@ export interface paths {
           budget?: parameters['rowFilter.profiles.budget'];
           address?: parameters['rowFilter.profiles.address'];
           interests?: parameters['rowFilter.profiles.interests'];
+          waiting_list?: parameters['rowFilter.profiles.waiting_list'];
         };
         header: {
           /** Preference */
@@ -194,6 +388,7 @@ export interface paths {
           budget?: parameters['rowFilter.profiles.budget'];
           address?: parameters['rowFilter.profiles.address'];
           interests?: parameters['rowFilter.profiles.interests'];
+          waiting_list?: parameters['rowFilter.profiles.waiting_list'];
         };
         body: {
           /** profiles */
@@ -213,6 +408,44 @@ export interface paths {
 }
 
 export interface definitions {
+  events: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /** Format: time with time zone */
+    end_date: string;
+  };
+  participations: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /** Format: uuid */
+    user1_id: string;
+    /** Format: uuid */
+    user2_id: string;
+    /**
+     * Format: boolean
+     * @default false
+     */
+    user1_hasPresent: boolean;
+    /**
+     * Format: boolean
+     * @default false
+     */
+    user2_hasPresent: boolean;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `events.id`.<fk table='events' column='id'/>
+     */
+    event_id: number;
+  };
   interests: {
     /**
      * Format: bigint
@@ -247,6 +480,11 @@ export interface definitions {
     address?: string;
     /** Format: ARRAY */
     interests?: unknown[];
+    /**
+     * Format: boolean
+     * @default false
+     */
+    waiting_list: boolean;
   };
 }
 
@@ -283,6 +521,26 @@ export interface parameters {
   offset: string;
   /** @description Limiting and Pagination */
   limit: string;
+  /** @description events */
+  'body.events': definitions['events'];
+  /** Format: bigint */
+  'rowFilter.events.id': string;
+  /** Format: time with time zone */
+  'rowFilter.events.end_date': string;
+  /** @description participations */
+  'body.participations': definitions['participations'];
+  /** Format: bigint */
+  'rowFilter.participations.id': string;
+  /** Format: uuid */
+  'rowFilter.participations.user1_id': string;
+  /** Format: uuid */
+  'rowFilter.participations.user2_id': string;
+  /** Format: boolean */
+  'rowFilter.participations.user1_hasPresent': string;
+  /** Format: boolean */
+  'rowFilter.participations.user2_hasPresent': string;
+  /** Format: bigint */
+  'rowFilter.participations.event_id': string;
   /** @description interests */
   'body.interests': definitions['interests'];
   /** Format: bigint */
@@ -307,6 +565,8 @@ export interface parameters {
   'rowFilter.profiles.address': string;
   /** Format: ARRAY */
   'rowFilter.profiles.interests': string;
+  /** Format: boolean */
+  'rowFilter.profiles.waiting_list': string;
 }
 
 export interface operations {}
