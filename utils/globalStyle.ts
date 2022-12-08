@@ -16,18 +16,34 @@ export const COLORS = {
   },
 };
 export const globalStyle = StyleSheet.create({
+  input: {
+    height: 40,
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 8,
+  },
   button: {
     backgroundColor: COLORS.primary,
     alignItems: 'center',
-    padding: 10,
-    borderRadius: 15,
+    height: 40,
+    display: 'flex',
+    justifyContent: 'center',
+    borderRadius: 12,
+    width: '100%',
   },
   secondaryButton: {
     alignItems: 'center',
-    padding: 10,
-    borderRadius: 4,
+    height: 40,
+    display: 'flex',
+    justifyContent: 'center',
+    borderRadius: 10,
     borderColor: COLORS.primary,
-    borderWidth: 2,
+    borderWidth: 1,
     color: COLORS.primary,
+    width: '100%',
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: '600',
   },
 });

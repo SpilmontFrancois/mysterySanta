@@ -1,3 +1,5 @@
 import {definitions} from './supabase';
 
-export type TProfile = definitions['profiles'];
+export type TProfile = definitions['profiles'] & {
+  interests: string[];
+};

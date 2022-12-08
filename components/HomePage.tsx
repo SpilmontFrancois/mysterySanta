@@ -1,17 +1,20 @@
-import { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
-import { supabase } from '../lib/supabase';
-import { TParticipations } from '../types/participation';
-import { getParticipation } from '../utils/participation';
-import { useProfile } from '../utils/session';
 import Button from './ui/Button';
+import {useEffect, useState} from 'react';
+import {getParticipation} from '../utils/participation';
+import {supabase} from '../lib/supabase';
+import {useProfile} from '../utils/session';
+import {TParticipations} from '../types/participation';
+import {Image, StyleSheet, Text, View} from 'react-native';
 
 // TODO : get it from active event
 const eventEndDate = new Date('2022-12-25T00:00:00').getTime();
 
 const HomePage = () => {
-  const { loading, profile } = useProfile();
-  const [participation, setParticipation] = useState<TParticipations[] | undefined>(undefined);
+  const {loading, profile} = useProfile();
+  const [participation, setParticipation] = useState<
+    TParticipations[] | undefined
+  >(undefined);
+
   const [formattedTimer, setFormattedTimer] = useState('');
 
   useEffect(() => {
@@ -20,8 +23,12 @@ const HomePage = () => {
       const timer = eventEndDate - now;
 
       let days = Math.floor(timer / (1000 * 60 * 60 * 24)).toString();
-      let hours = Math.floor((timer % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString();
-      let minutes = Math.floor((timer % (1000 * 60 * 60)) / (1000 * 60)).toString();
+      let hours = Math.floor(
+        (timer % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+      ).toString();
+      let minutes = Math.floor(
+        (timer % (1000 * 60 * 60)) / (1000 * 60),
+      ).toString();
       let seconds = Math.floor((timer % (1000 * 60)) / 1000).toString();
 
       days = Number(days) < 10 ? '0' + days : days;
@@ -29,37 +36,43 @@ const HomePage = () => {
       minutes = Number(minutes) < 10 ? '0' + minutes : minutes;
       seconds = Number(seconds) < 10 ? '0' + seconds : seconds;
 
-      setFormattedTimer(
-        `${days}:${hours}:${minutes}:${seconds}`
-      );
+      setFormattedTimer(`${days}:${hours}:${minutes}:${seconds}`);
     }, 1000);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     if (profile) {
-      getParticipation(profile.id).then((_pcptn) => {
+      getParticipation(profile.id).then(_pcptn => {
         setParticipation(_pcptn);
-      })
+      });
     }
   }, [profile]);
 
   const participate = async () => {
     if (profile) {
-      const userMatch = await supabase.from('profiles')
+      const userMatch = await supabase
+        .from('profiles')
         .select('*')
         .eq('waiting_list', true)
         .eq('budget', profile.budget)
         .neq('id', profile.id)
-        .order('updated_at', { ascending: true })
+        .order('updated_at', {ascending: true})
         .limit(1);
 
       if (userMatch.data && userMatch.data.length > 0) {
-        await supabase.from('profiles').update({
-          waiting_list: false,
-        }).eq('id', userMatch.data[0].id);
+        await supabase
+          .from('profiles')
+          .update({
+            waiting_list: false,
+          })
+          .eq('id', userMatch.data[0].id);
 
-        const event = await supabase.from('events').select('*').order('end_date', { ascending: false }).limit(1);
+        const event = await supabase
+          .from('events')
+          .select('*')
+          .order('end_date', {ascending: false})
+          .limit(1);
         if (event.data && event.data.length > 0) {
           await supabase.from('participations').insert({
             user1_id: profile.id,
@@ -68,17 +81,24 @@ const HomePage = () => {
           });
         }
       } else {
-        const event = await supabase.from('events').select('*').order('end_date', { ascending: false }).limit(1);
+        const event = await supabase
+          .from('events')
+          .select('*')
+          .order('end_date', {ascending: false})
+          .limit(1);
         if (event.data && event.data.length > 0) {
-          const participation = await supabase.from('participations')
+          const participation = await supabase
+            .from('participations')
             .select('*')
             .or(`user1_id.eq.${profile.id},user2_id.eq.${profile.id}`)
             .eq('event_id', event.data[0].id);
           if (participation.data && participation.data.length === 0) {
-            await supabase.from('profiles').update({
-              waiting_list: true,
-            }).eq('id', profile.id);
-
+            await supabase
+              .from('profiles')
+              .update({
+                waiting_list: true,
+              })
+              .eq('id', profile.id);
           } else {
             // Une participation existe déjà
           }
@@ -100,12 +120,21 @@ const HomePage = () => {
         <Image source={require('../assets/img/Star.png')} />
       </View>
       <Button
-        text={participation ? 'Vous avez déjà participé à cet évènement !' : 'Participer au Secret Santa !'}
+        text={
+          participation
+            ? 'Vous avez déjà participé à cet évènement !'
+            : 'Participer au Secret Santa !'
+        }
         onPress={() => participate()}
-        style={participation ? { ...styles.button, opacity: 0.75 } : styles.button}
-        disabled={participation ? true : false}
+        style={
+          participation ? {...styles.button, opacity: 0.75} : styles.button
+        }
+        disabled={!!participation}
       />
-      <Image source={require('../assets/img/Chimney.png')} style={styles.bottomImg} />
+      <Image
+        source={require('../assets/img/Chimney.png')}
+        style={styles.bottomImg}
+      />
     </>
   );
 };

@@ -23,7 +23,7 @@ import {
 import {Session} from '@supabase/supabase-js';
 import {supabase} from './lib/supabase';
 import {COLORS} from './utils/globalStyle';
-import LoginPage from './components/LoginPage';
+import AuthPage from './components/AuthPage';
 import ProfilePage from './components/ProfilePage';
 import {SessionProvider} from './utils/auth/SessionContext';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
@@ -101,7 +101,7 @@ const App = () => {
           </Tab.Navigator>
         </SessionProvider>
       ) : (
-        <LoginPage />
+        <AuthPage />
       )}
     </NavigationContainer>
   );
