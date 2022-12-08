@@ -20,7 +20,7 @@ export const globalStyle = StyleSheet.create({
     backgroundColor: COLORS.primary,
     alignItems: 'center',
     padding: 10,
-    borderRadius: 4,
+    borderRadius: 15,
   },
   secondaryButton: {
     alignItems: 'center',

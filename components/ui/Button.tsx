@@ -5,13 +5,13 @@ import {
   TouchableOpacityProps,
   ViewStyle,
 } from 'react-native';
-import {COLORS, globalStyle} from '../../utils/globalStyle';
+import { COLORS, globalStyle } from '../../utils/globalStyle';
 import React from 'react';
 
 type Props = TouchableOpacityProps & {
   secondary?: boolean;
   text: string;
-  style: StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle>;
 };
 
 const Button = (props: Props) => {
@@ -24,7 +24,8 @@ const Button = (props: Props) => {
       ]}>
       <Text
         style={{
-          color: props.secondary ? COLORS.primary : COLORS.neutral['900'],
+          color: props.secondary ? COLORS.primary : COLORS.neutral['100'],
+          fontWeight: 'bold',
         }}>
         {props.text}
       </Text>
