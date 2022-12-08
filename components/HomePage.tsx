@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
+import Button from './ui/Button';
 
-const christmas = new Date('2022-12-25T00:00:00').getTime();
+const eventEndDate = new Date('2022-12-25T00:00:00').getTime();
 
 const HomePage = () => {
   const [formattedTimer, setFormattedTimer] = useState('');
@@ -9,7 +10,7 @@ const HomePage = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date().getTime();
-      const timer = christmas - now;
+      const timer = eventEndDate - now;
 
       const days = Math.floor(timer / (1000 * 60 * 60 * 24));
       const hours = Math.floor(
@@ -25,6 +26,10 @@ const HomePage = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const participate = () => {
+    console.log('participate');
+  };
+
   return (
     <>
       <View style={styles.iconsTop}>
@@ -37,7 +42,12 @@ const HomePage = () => {
         <Image source={require('../assets/img/BottomLeft.png')} />
         <Image source={require('../assets/img/Star.png')} />
       </View>
-      <Image source={require('../assets/img/Chimney.png')} style={styles.bottom} />
+      <Button
+        text={'Participer au Secret Santa !'}
+        onPress={() => participate()}
+        style={styles.button}
+      />
+      <Image source={require('../assets/img/Chimney.png')} style={styles.bottomImg} />
     </>
   );
 };
@@ -70,7 +80,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000',
   },
-  bottom: {
+  button: {
+    marginLeft: 50,
+    marginRight: 50,
+    marginTop: 50,
+    padding: 20,
+  },
+  bottomImg: {
+    width: '100%',
   },
 });
 
