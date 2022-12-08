@@ -40,29 +40,34 @@ const HomePage = () => {
         .limit(1);
 
       if (userMatch.data && userMatch.data.length > 0) {
-        console.log(userMatch.data[0]);
-        // const usr = await supabase.from('profiles').select('*').eq('id', userMatch.data.id);
-        // console.log(usr);
-
-        const data = await supabase.from('profiles').update({
+        await supabase.from('profiles').update({
           waiting_list: false,
         }).eq('id', userMatch.data[0].id);
-        console.log(data);
 
-        // const event = await supabase.from('events').select('*').order('end_date', { ascending: false }).limit(1);
-        // if (event.data && event.data.length > 0) {
-          // console.log(event.data[0]);
-          const data2 = await supabase.from('participations').insert({
+        const event = await supabase.from('events').select('*').order('end_date', { ascending: false }).limit(1);
+        if (event.data && event.data.length > 0) {
+          await supabase.from('participations').insert({
             user1_id: profile.id,
             user2_id: userMatch.data[0].id,
-            // event_id: event.data[0].id,
+            event_id: event.data[0].id,
           });
-          console.log(data2);
-        // }
+        }
       } else {
-        await supabase.from('profiles').update({
-          waiting_list: true,
-        }).eq('id', profile.id);
+        const event = await supabase.from('events').select('*').order('end_date', { ascending: false }).limit(1);
+        if (event.data && event.data.length > 0) {
+          const participation = await supabase.from('participations')
+            .select('*')
+            .or(`user1_id.eq.${profile.id},user2_id.eq.${profile.id}`)
+            .eq('event_id', event.data[0].id);
+          if (participation.data && participation.data.length === 0) {
+            await supabase.from('profiles').update({
+              waiting_list: true,
+            }).eq('id', profile.id);
+
+          } else {
+            // Une participation existe déjà
+          }
+        }
       }
     }
   };
