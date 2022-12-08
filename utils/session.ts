@@ -3,11 +3,12 @@ import {Session} from '@supabase/supabase-js';
 import {supabase} from '../lib/supabase';
 import {TProfile} from '../types/profile';
 import {Alert} from 'react-native';
+import {useSession} from './auth/SessionContext';
 
 export async function getProfile(session: Session) {
   let {data, error, status} = await supabase
     .from('profiles')
-    .select(`full_name, avatar_url, budget, interests`)
+    .select('*')
     .eq('id', session?.user.id)
     .single();
   if (error && status !== 406) {
@@ -16,7 +17,8 @@ export async function getProfile(session: Session) {
 
   return data;
 }
-export function useProfile(session: Session) {
+export function useProfile() {
+  const session = useSession();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<TProfile | undefined>(undefined);
   useEffect(() => {

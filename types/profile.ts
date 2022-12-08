@@ -1,3 +1,3 @@
 import {definitions} from './supabase';
 
-export type TProfile = Omit<definitions['profiles'], 'id'>;
+export type TProfile = definitions['profiles'];
