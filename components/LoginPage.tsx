@@ -35,22 +35,24 @@ export default function Auth() {
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Input
           label="Email"
-          leftIcon={{type: 'font-awesome', name: 'envelope'}}
           onChangeText={text => setEmail(text)}
           value={email}
           placeholder="email@address.com"
           autoCapitalize={'none'}
+          autoComplete={'email'}
+          autoCompleteType={'string'}
         />
       </View>
       <View style={styles.verticallySpaced}>
         <Input
           label="Password"
-          leftIcon={{type: 'font-awesome', name: 'lock'}}
           onChangeText={text => setPassword(text)}
           value={password}
           secureTextEntry={true}
           placeholder="Password"
           autoCapitalize={'none'}
+          autoComplete={'password'}
+          autoCompleteType={'string'}
         />
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
