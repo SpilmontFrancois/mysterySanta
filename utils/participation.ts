@@ -6,7 +6,7 @@ export const getParticipation = async (id: string) => {
         .from('participations')
         .select(`*`)
         .or(`user1_id.eq.${id},user2_id.eq.${id}`)
-        console.log(data);
+        .order('created_at', { ascending: false })
         
     if (error) {
         throw error
