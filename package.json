@@ -7,7 +7,8 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "update-types": "npx openapi-typescript \"https://dijbdshxvqpbceqsmtgf.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpamJkc2h4dnFwYmNlcXNtdGdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzA0MjI5MjEsImV4cCI6MTk4NTk5ODkyMX0.mcb06cUBkn3LqkYHToV8GqcKgGkJjmEM5kthI3N3Neo\" --version=2 --output types/supabase.ts"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
