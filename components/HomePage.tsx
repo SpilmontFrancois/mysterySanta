@@ -1,9 +1,16 @@
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
+import NavBar from "./NavBar";
+
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+const Tab = createBottomTabNavigator();
 
 const HomePage = () => {
   return (
-    <View>
-    </View>
+    <ScrollView>
+      <Tab.Navigator tabBar={props => <NavBar {...props} />}>
+      </Tab.Navigator>
+    </ScrollView>
   );
 }
 
