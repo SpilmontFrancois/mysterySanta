@@ -1,46 +1,28 @@
 import React from "react";
-import { ImageBackground, Image, ScrollView, StyleSheet, Text, View } from "react-native";
-import { COLORS } from "../utils/globalStyle";
+import { ImageBackground, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useSession } from "../utils/auth/SessionContext";
+import { getParticipation } from "../utils/participation";
+import { TParticipations } from "../types/participation";
+import Loader from "./ui/Loader";
 
 const HistoryPage = () => {
 
-  const [participations, setParticipations] = React.useState([
-    {
-      year: 2022,
-      receiver: "John Doe",
-      active: true,
-    },
-    {
-      year: 2021,
-      receiver: "Jane Doe",
-      active: false,
-    },
-    {
-      year: 2020,
-      receiver: "Bertrand Doe",
-      active: false,
-    },
-    {
-      year: 2019,
-      receiver: "Hervé Renard",
-      active: false,
-    },
-    {
-      year: 2018,
-      receiver: "Jean-Pierre Papin",
-      active: false,
-    },
-    {
-      year: 2017,
-      receiver: "Didier Deschamps",
-      active: false,
-    },
-    {
-      year: 2016,
-      receiver: "Zinedine Zidane",
-      active: false,
-    },
-  ]);
+  const [participations, setParticipations] = React.useState<TParticipations[] | undefined>(undefined);
+
+  const session = useSession();
+
+  React.useEffect(() => {
+    if (session) {
+      getParticipation(session.user.id).then((participations) => {
+        setParticipations(participations);
+      });
+    }
+  }
+    , [session]);
+
+  if (!participations) {
+    return <Loader />;
+  }
 
   return (
     <View>
@@ -51,15 +33,9 @@ const HistoryPage = () => {
         <ScrollView style={styles.paddingBottom}>
           <Text style={styles.titleHistory}>Vos participations :</Text>
           {participations.map((participation) => (
-            <View style={[styles.items, participation.active === false ? styles.notActive : styles.active]} key={participation.year}>
-              <Text style={styles.title}>Votre Secret Santa de {participation.year}</Text>
-              {
-                participation.active ? (
-                  <Text style={styles.description}>Vous participez actuellement au Secret Santa du mois de Décembre {participation.year}. N'oubliez pas de commander le cadeau de <Text style={styles.bold}>{participation.receiver}</Text> avant le <Text style={styles.bold}>15 Décembre</Text>.</Text>
-                ) : (
-                  <Text style={styles.description}>Vous avez participé au Secret Santa du mois de Décembre {participation.year}. Vous avez offert un cadeau à {participation.receiver}.</Text>
-                )
-              }
+            <View>
+              <Text style={styles.title}>Votre Secret Santa de</Text>
+              <Text style={styles.description}>Vous participez actuellement au Secret Santa du mois de Décembre. N'oubliez pas de commander le cadeau de #### avant le <Text style={styles.bold}>15 Décembre</Text>.</Text>
             </View>
           ))}
         </ScrollView>
