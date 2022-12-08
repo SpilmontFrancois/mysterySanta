@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { supabase } from '../lib/supabase';
+import { useProfile } from '../utils/session';
 import Button from './ui/Button';
 
 const eventEndDate = new Date('2022-12-25T00:00:00').getTime();
 
 const HomePage = () => {
+  const { loading, profile } = useProfile();
   const [formattedTimer, setFormattedTimer] = useState('');
 
   useEffect(() => {
@@ -28,34 +30,39 @@ const HomePage = () => {
   }, []);
 
   const participate = async () => {
-    const user = await supabase.auth.getUser();
-    const profile = await supabase.from('profiles').select('*').eq('id', user.data.user?.id);
+    if (profile) {
+      const userMatch = await supabase.from('profiles')
+        .select('*')
+        .eq('waiting_list', true)
+        .eq('budget', profile.budget)
+        .neq('id', profile.id)
+        .order('updated_at', { ascending: true })
+        .limit(1);
 
-    if (profile.data) {
-      const usersList = await supabase.from('profiles').select('*').eq('waiting_list', true).eq('budget', profile.data[0].budget).neq('id', user.data.user?.id);
-      console.log(usersList);
+      if (userMatch.data && userMatch.data.length > 0) {
+        console.log(userMatch.data[0]);
+        // const usr = await supabase.from('profiles').select('*').eq('id', userMatch.data.id);
+        // console.log(usr);
 
-      if (usersList.data && usersList.data.length > 0) {
-        const rdm = Math.floor(Math.random() * usersList.data.length);
-        console.log(rdm);
-        const randomUser = usersList.data[rdm];
-        console.log(usersList.data[rdm]);
-
-        await supabase.from('profiles').update({
+        const data = await supabase.from('profiles').update({
           waiting_list: false,
-        }).eq('id', user.data.user?.id);
-        await supabase.from('profiles').update({
-          waiting_list: false,
-        }).eq('id', randomUser.id);
+        }).eq('id', userMatch.data[0].id);
+        console.log(data);
 
-        await supabase.from('participations').insert({
-          user1_id: user.data.user?.id,
-          user2_id: randomUser.id,
-        });
+        // const event = await supabase.from('events').select('*').order('end_date', { ascending: false }).limit(1);
+        // if (event.data && event.data.length > 0) {
+          // console.log(event.data[0]);
+          const data2 = await supabase.from('participations').insert({
+            user1_id: profile.id,
+            user2_id: userMatch.data[0].id,
+            // event_id: event.data[0].id,
+          });
+          console.log(data2);
+        // }
       } else {
         await supabase.from('profiles').update({
           waiting_list: true,
-        }).eq('id', user.data.user?.id);
+        }).eq('id', profile.id);
       }
     }
   };
