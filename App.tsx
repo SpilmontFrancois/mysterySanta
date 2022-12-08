@@ -24,7 +24,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from './lib/supabase';
-import LoginPage from './components/LoginPage';
+import { COLORS } from './utils/globalStyle';
 
 const Tab = createBottomTabNavigator();
 
@@ -45,42 +45,60 @@ const App = () => {
   return (
     <NavigationContainer>
       <StatusBar />
-      {session ? (
-        <Tab.Navigator initialRouteName={'Home'}>
-          <Tab.Screen
-            name={'homePage'}
-            component={HomePage}
-            options={{
-              title: 'Home',
-              tabBarIcon: () => <FontAwesomeIcon icon={faHouse} />,
-              headerShown: false,
-            }}
-          />
-          <Tab.Screen
-            name={'history'}
-            component={HistoryPage}
-            options={{
-              title: 'History',
-              tabBarIcon: () => <FontAwesomeIcon icon={faClockRotateLeft} />,
-              headerShown: false,
-            }}
-          />
-          <Tab.Screen
-            name={'profile'}
-            component={ProfilePage}
-            options={{
-              title: 'Profile',
-              tabBarIcon: () => <FontAwesomeIcon icon={faUser} />,
-            }}
-          />
-        </Tab.Navigator>
-      ) : (
+      {/* {session ? ( */}
+      <Tab.Navigator initialRouteName={'Home'}>
+        <Tab.Screen
+          name={'homePage'}
+          component={HomePage}
+          options={{
+            title: 'Home',
+            tabBarIcon: () => <FontAwesomeIcon icon={faHouse} style={{ color: COLORS.neutral[100] }} size={25} />,
+            headerShown: false,
+            tabBarStyle: styles.tabBarStyle,
+            tabBarLabelStyle: styles.tabBarLabelStyle,
+          }}
+        />
+        <Tab.Screen
+          name={'history'}
+          component={HistoryPage}
+          options={{
+            title: 'History',
+            tabBarIcon: () => <FontAwesomeIcon icon={faClockRotateLeft} style={{ color: COLORS.neutral[100] }} size={25} />,
+            headerShown: false,
+            tabBarStyle: styles.tabBarStyle,
+            tabBarLabelStyle: styles.tabBarLabelStyle,
+          }}
+        />
+        <Tab.Screen
+          name={'profile'}
+          component={ProfilePage}
+          options={{
+            title: 'Profile',
+            tabBarIcon: () => <FontAwesomeIcon icon={faUser} style={{ color: COLORS.neutral[100] }} size={25} />,
+            tabBarStyle: styles.tabBarStyle,
+            tabBarLabelStyle: styles.tabBarLabelStyle,
+          }}
+        />
+      </Tab.Navigator>
+      {/* ) : (
         <LoginPage />
-      )}
+      )} */}
     </NavigationContainer>
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  tabBarLabelStyle: {
+    fontSize: 14,
+    padding: 5,
+    color: COLORS.neutral['100'],
+  },
+  tabBarStyle: {
+    height: 80,
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+    backgroundColor: COLORS.secondary,
+  },
+});
 
 export default App;
