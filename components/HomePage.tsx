@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
+import { supabase } from '../lib/supabase';
 import Button from './ui/Button';
 
 const eventEndDate = new Date('2022-12-25T00:00:00').getTime();
@@ -26,8 +27,37 @@ const HomePage = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const participate = () => {
-    console.log('participate');
+  const participate = async () => {
+    const user = await supabase.auth.getUser();
+    const profile = await supabase.from('profiles').select('*').eq('id', user.data.user?.id);
+
+    if (profile.data) {
+      const usersList = await supabase.from('profiles').select('*').eq('waiting_list', true).eq('budget', profile.data[0].budget).neq('id', user.data.user?.id);
+      console.log(usersList);
+
+      if (usersList.data && usersList.data.length > 0) {
+        const rdm = Math.floor(Math.random() * usersList.data.length);
+        console.log(rdm);
+        const randomUser = usersList.data[rdm];
+        console.log(usersList.data[rdm]);
+
+        await supabase.from('profiles').update({
+          waiting_list: false,
+        }).eq('id', user.data.user?.id);
+        await supabase.from('profiles').update({
+          waiting_list: false,
+        }).eq('id', randomUser.id);
+
+        await supabase.from('participations').insert({
+          user1_id: user.data.user?.id,
+          user2_id: randomUser.id,
+        });
+      } else {
+        await supabase.from('profiles').update({
+          waiting_list: true,
+        }).eq('id', user.data.user?.id);
+      }
+    }
   };
 
   return (
