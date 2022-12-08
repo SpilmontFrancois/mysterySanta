@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { supabase } from '../lib/supabase';
+import { TParticipations } from '../types/participation';
+import { getParticipation } from '../utils/participation';
 import { useProfile } from '../utils/session';
 import Button from './ui/Button';
 
@@ -8,6 +10,7 @@ const eventEndDate = new Date('2022-12-25T00:00:00').getTime();
 
 const HomePage = () => {
   const { loading, profile } = useProfile();
+  const [participation, setParticipation] = useState<TParticipations[] | undefined>(undefined);
   const [formattedTimer, setFormattedTimer] = useState('');
 
   useEffect(() => {
@@ -31,6 +34,14 @@ const HomePage = () => {
     }, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (profile) {
+      getParticipation(profile.id).then((_pcptn) => {
+        setParticipation(_pcptn);
+      })
+    }
+  }, [profile]);
 
   const participate = async () => {
     if (profile) {
@@ -88,9 +99,10 @@ const HomePage = () => {
         <Image source={require('../assets/img/Star.png')} />
       </View>
       <Button
-        text={'Participer au Secret Santa !'}
+        text={participation ? 'Vous avez déjà participé à cet évènement !' : 'Participer au Secret Santa !'}
         onPress={() => participate()}
-        style={styles.button}
+        style={participation ? { ...styles.button, opacity: 0.75 } : styles.button}
+        disabled={participation ? true : false}
       />
       <Image source={require('../assets/img/Chimney.png')} style={styles.bottomImg} />
     </>
