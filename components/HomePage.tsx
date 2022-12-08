@@ -6,6 +6,7 @@ import { getParticipation } from '../utils/participation';
 import { useProfile } from '../utils/session';
 import Button from './ui/Button';
 
+// TODO : get it from active event
 const eventEndDate = new Date('2022-12-25T00:00:00').getTime();
 
 const HomePage = () => {
