@@ -1,17 +1,11 @@
-import { ScrollView, View } from "react-native";
-import NavBar from "./NavBar";
+import {ScrollView} from 'react-native';
 
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 const Tab = createBottomTabNavigator();
 
 const HomePage = () => {
-  return (
-    <ScrollView>
-      <Tab.Navigator tabBar={props => <NavBar {...props} />}>
-      </Tab.Navigator>
-    </ScrollView>
-  );
-}
+  return <ScrollView></ScrollView>;
+};
 
-export default HomePage
+export default HomePage;

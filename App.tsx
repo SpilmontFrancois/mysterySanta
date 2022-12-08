@@ -10,34 +10,51 @@
 
 import {NavigationContainer} from '@react-navigation/native';
 
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import {StatusBar, StyleSheet, useColorScheme} from 'react-native';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-
-import LoginPage from './components/LoginPage';
+import {StatusBar, StyleSheet} from 'react-native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomePage from './components/HomePage';
 import HistoryPage from './components/HistoryPage';
 import ProfilePage from './components/ProfilePage';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {
+  faClockRotateLeft,
+  faHouse,
+  faUser,
+} from '@fortawesome/free-solid-svg-icons';
 
-const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
 const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
   return (
     <NavigationContainer>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <Stack.Navigator>
-        <Stack.Screen name="Login" component={LoginPage} />
-        <Stack.Screen name="Home" component={HomePage} />
-        <Stack.Screen name="History" component={HistoryPage} />
-        <Stack.Screen name="Profile" component={ProfilePage} />
-      </Stack.Navigator>
+      <StatusBar />
+      <Tab.Navigator initialRouteName={'Home'}>
+        <Tab.Screen
+          name={'homePage'}
+          component={HomePage}
+          options={{
+            title: 'Home',
+            tabBarIcon: () => <FontAwesomeIcon icon={faHouse} />,
+          }}
+        />
+        <Tab.Screen
+          name={'history'}
+          component={HistoryPage}
+          options={{
+            title: 'History',
+            tabBarIcon: () => <FontAwesomeIcon icon={faClockRotateLeft} />,
+          }}
+        />
+        <Tab.Screen
+          name={'profile'}
+          component={ProfilePage}
+          options={{
+            title: 'Profile',
+            tabBarIcon: () => <FontAwesomeIcon icon={faUser} />,
+          }}
+        />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 };

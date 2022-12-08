@@ -1,10 +1,7 @@
-import { View } from "react-native";
+import {View} from 'react-native';
 
 const HistoryPage = () => {
-  return (
-    <View>
-    </View>
-  );
-}
+  return <View></View>;
+};
 
-export default HistoryPage
+export default HistoryPage;

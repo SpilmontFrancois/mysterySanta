@@ -1,9 +1,15 @@
 import React, {useState} from 'react';
-import {Alert, StyleSheet, View} from 'react-native';
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {supabase} from '../lib/supabase';
-import {Button, Input} from 'react-native-elements';
 
-export default function Auth() {
+export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -33,41 +39,33 @@ export default function Auth() {
   return (
     <View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Input
-          label="Email"
+        <TextInput
           onChangeText={text => setEmail(text)}
           value={email}
           placeholder="email@address.com"
           autoCapitalize={'none'}
           autoComplete={'email'}
-          autoCompleteType={'string'}
         />
       </View>
       <View style={styles.verticallySpaced}>
-        <Input
-          label="Password"
+        <TextInput
           onChangeText={text => setPassword(text)}
           value={password}
           secureTextEntry={true}
           placeholder="Password"
           autoCapitalize={'none'}
           autoComplete={'password'}
-          autoCompleteType={'string'}
         />
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button
-          title="Sign in"
-          disabled={loading}
-          onPress={() => signInWithEmail()}
-        />
+        <TouchableOpacity disabled={loading} onPress={() => signInWithEmail()}>
+          <Text>Sign in</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.verticallySpaced}>
-        <Button
-          title="Sign up"
-          disabled={loading}
-          onPress={() => signUpWithEmail()}
-        />
+        <TouchableOpacity disabled={loading} onPress={() => signUpWithEmail()}>
+          <Text>Sign up</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
