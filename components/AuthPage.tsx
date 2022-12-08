@@ -11,12 +11,16 @@ import {
 import {supabase} from '../lib/supabase';
 import Button from './ui/Button';
 import {COLORS, globalStyle} from '../utils/globalStyle';
+import {useNavigation} from '@react-navigation/native';
+import {routes} from '../settings/routes';
 
 export default function AuthPage() {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const navigation = useNavigation();
 
   const toggleMode = () => {
     setMode(prevMode => (prevMode === 'login' ? 'register' : 'login'));
@@ -30,6 +34,7 @@ export default function AuthPage() {
     });
 
     if (error) Alert.alert(error.message);
+    else navigation.navigate(routes.HomePage as never);
     setLoading(false);
   }
 
@@ -41,6 +46,16 @@ export default function AuthPage() {
     });
 
     if (error) Alert.alert(error.message);
+    else {
+      Alert.alert(
+        'Registration successfull',
+        'Please go check your emails and click on the link to validate your account',
+      );
+
+      setEmail('');
+      setPassword('');
+      setMode('login');
+    }
     setLoading(false);
   }
 
@@ -88,7 +103,9 @@ export default function AuthPage() {
           style={{marginBottom: 16}}
           text={mode === 'login' ? 'Sign in' : 'Sign up'}
           disabled={loading}
-          onPress={() => signInWithEmail()}
+          onPress={() =>
+            mode === 'login' ? signInWithEmail() : signUpWithEmail()
+          }
         />
         <View
           style={{display: 'flex', flexDirection: 'row', alignSelf: 'center'}}>

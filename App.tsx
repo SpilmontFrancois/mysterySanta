@@ -27,26 +27,41 @@ import AuthPage from './components/AuthPage';
 import ProfilePage from './components/ProfilePage';
 import {SessionProvider} from './utils/auth/SessionContext';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {routes} from './settings/routes';
+import Loader from './components/ui/Loader';
 
 const Tab = createBottomTabNavigator();
 
 const App = () => {
+  const [sessionLoading, setSessionLoading] = useState(true);
   const [session, setSession] = useState<Session | null>(null);
-
+  const [isFirstConnection, setIsFirstConnection] = useState(true);
   useEffect(() => {
-    supabase.auth.getSession().then(({data: {session: _session}}) => {
-      setSession(_session);
-    });
+    supabase.auth
+      .getSession()
+      .then(({data: {session: _session}}) => {
+        setSession(_session);
+        supabase
+          .from('profiles')
+          .select('updated_at')
+          .eq('id', _session?.user.id)
+          .single()
+          .then(({data}) => {
+            if (data && data.updated_at) setIsFirstConnection(false);
+          });
+      })
+      .finally(() => setSessionLoading(false));
 
     supabase.auth.onAuthStateChange((_event, _session) => {
       setSession(_session);
     });
   }, []);
 
+  if (sessionLoading) return <Loader />;
   return (
     <NavigationContainer>
       <StatusBar />
-      {session ? (
+      {session && (
         <SessionProvider value={session}>
           <Tab.Navigator
             initialRouteName={'Home'}
@@ -55,54 +70,54 @@ const App = () => {
               tabBarLabelStyle: styles.tabBarLabelStyle,
             }}>
             <Tab.Screen
-              name={'homePage'}
+              name={routes.HomePage}
               component={HomePage}
               options={{
                 title: 'Home',
                 tabBarIcon: () => (
                   <FontAwesomeIcon
                     icon={faHouse}
-                    style={{color: COLORS.neutral[100]}}
-                    size={25}
+                    style={{color: '#98AABC'}}
+                    size={24}
                   />
                 ),
                 headerShown: false,
               }}
             />
             <Tab.Screen
-              name={'history'}
+              name={routes.History}
               component={HistoryPage}
               options={{
                 title: 'History',
                 tabBarIcon: () => (
                   <FontAwesomeIcon
                     icon={faClockRotateLeft}
-                    style={{color: COLORS.neutral[100]}}
-                    size={25}
+                    style={{color: '#98AABC'}}
+                    size={24}
                   />
                 ),
                 headerShown: false,
               }}
             />
             <Tab.Screen
-              name={'profile'}
+              name={routes.Profile}
               component={ProfilePage}
               options={{
                 title: 'Profile',
                 tabBarIcon: () => (
                   <FontAwesomeIcon
                     icon={faUser}
-                    style={{color: COLORS.neutral[100]}}
-                    size={25}
+                    style={{color: '#98AABC'}}
+                    size={24}
                   />
                 ),
+                headerShown: false,
               }}
             />
           </Tab.Navigator>
         </SessionProvider>
-      ) : (
-        <AuthPage />
       )}
+      {!session && <AuthPage />}
     </NavigationContainer>
   );
 };
@@ -111,7 +126,7 @@ const styles = StyleSheet.create({
   tabBarLabelStyle: {
     fontSize: 14,
     padding: 5,
-    color: COLORS.neutral['100'],
+    color: '#98AABC',
   },
   tabBarStyle: {
     height: 80,

@@ -2,9 +2,11 @@ import Button from './ui/Button';
 import {useEffect, useState} from 'react';
 import {getParticipation} from '../utils/participation';
 import {supabase} from '../lib/supabase';
-import {useProfile} from '../utils/session';
+import {useProfile} from '../utils/profile';
 import {TParticipations} from '../types/participation';
 import {Image, StyleSheet, Text, View} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import Loader from './ui/Loader';
 
 // TODO : get it from active event
 const eventEndDate = new Date('2022-12-25T00:00:00').getTime();
@@ -16,6 +18,7 @@ const HomePage = () => {
   >(undefined);
 
   const [formattedTimer, setFormattedTimer] = useState('');
+  const navigation = useNavigation();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -106,6 +109,7 @@ const HomePage = () => {
       }
     }
   };
+  if (loading) return <Loader />;
 
   return (
     <>

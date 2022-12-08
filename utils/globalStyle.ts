@@ -3,6 +3,7 @@ import {StyleSheet} from 'react-native';
 export const COLORS = {
   primary: '#F05454',
   secondary: '#30475D',
+  green: '#129277',
   neutral: {
     100: '#F5F5F5',
     200: '#DEDEDE',
@@ -17,7 +18,7 @@ export const COLORS = {
 };
 export const globalStyle = StyleSheet.create({
   input: {
-    height: 40,
+    height: 45,
     borderWidth: 1,
     borderRadius: 12,
     paddingHorizontal: 8,
@@ -25,7 +26,7 @@ export const globalStyle = StyleSheet.create({
   button: {
     backgroundColor: COLORS.primary,
     alignItems: 'center',
-    height: 40,
+    height: 45,
     display: 'flex',
     justifyContent: 'center',
     borderRadius: 12,
@@ -33,7 +34,7 @@ export const globalStyle = StyleSheet.create({
   },
   secondaryButton: {
     alignItems: 'center',
-    height: 40,
+    height: 45,
     display: 'flex',
     justifyContent: 'center',
     borderRadius: 10,
@@ -45,5 +46,7 @@ export const globalStyle = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: '600',
+    color: COLORS.neutral['900'],
   },
+  lightTitle: {fontSize: 20, color: COLORS.neutral['700']},
 });

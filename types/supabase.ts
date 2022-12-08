@@ -112,6 +112,7 @@ export interface paths {
           user1_hasPresent?: parameters['rowFilter.participations.user1_hasPresent'];
           user2_hasPresent?: parameters['rowFilter.participations.user2_hasPresent'];
           event_id?: parameters['rowFilter.participations.event_id'];
+          created_at?: parameters['rowFilter.participations.created_at'];
           /** Filtering Columns */
           select?: parameters['select'];
           /** Ordering */
@@ -168,6 +169,7 @@ export interface paths {
           user1_hasPresent?: parameters['rowFilter.participations.user1_hasPresent'];
           user2_hasPresent?: parameters['rowFilter.participations.user2_hasPresent'];
           event_id?: parameters['rowFilter.participations.event_id'];
+          created_at?: parameters['rowFilter.participations.created_at'];
         };
         header: {
           /** Preference */
@@ -188,6 +190,7 @@ export interface paths {
           user1_hasPresent?: parameters['rowFilter.participations.user1_hasPresent'];
           user2_hasPresent?: parameters['rowFilter.participations.user2_hasPresent'];
           event_id?: parameters['rowFilter.participations.event_id'];
+          created_at?: parameters['rowFilter.participations.created_at'];
         };
         body: {
           /** participations */
@@ -415,7 +418,7 @@ export interface definitions {
      * This is a Primary Key.<pk/>
      */
     id: number;
-    /** Format: time with time zone */
+    /** Format: date */
     end_date: string;
   };
   participations: {
@@ -445,6 +448,11 @@ export interface definitions {
      * This is a Foreign Key to `events.id`.<fk table='events' column='id'/>
      */
     event_id: number;
+    /**
+     * Format: timestamp without time zone
+     * @default now()
+     */
+    created_at: string;
   };
   interests: {
     /**
@@ -459,7 +467,7 @@ export interface definitions {
      */
     created_at?: string;
     /** Format: text */
-    name?: string;
+    name: string;
   };
   profiles: {
     /**
@@ -525,7 +533,7 @@ export interface parameters {
   'body.events': definitions['events'];
   /** Format: bigint */
   'rowFilter.events.id': string;
-  /** Format: time with time zone */
+  /** Format: date */
   'rowFilter.events.end_date': string;
   /** @description participations */
   'body.participations': definitions['participations'];
@@ -541,6 +549,8 @@ export interface parameters {
   'rowFilter.participations.user2_hasPresent': string;
   /** Format: bigint */
   'rowFilter.participations.event_id': string;
+  /** Format: timestamp without time zone */
+  'rowFilter.participations.created_at': string;
   /** @description interests */
   'body.interests': definitions['interests'];
   /** Format: bigint */
