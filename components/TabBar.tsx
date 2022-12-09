@@ -4,13 +4,11 @@ import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import {COLORS} from '../utils/globalStyle';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {customRoutes} from '../settings/routes';
-import {useProfile} from '../hooks/useProfile';
 import {isFirstConnection} from '../utils/profile';
+import {useProfile} from '../utils/auth/ProfileContext';
 
 const TabBar = (props: BottomTabBarProps) => {
-  const {profile, loading} = useProfile();
-
-  if (loading) return null;
+  const {profile} = useProfile();
 
   return (
     <View style={styles.container}>

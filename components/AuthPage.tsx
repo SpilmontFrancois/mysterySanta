@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Alert,
   Image,
@@ -9,11 +9,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { supabase } from '../lib/supabase';
+import {supabase} from '../lib/supabase';
 import Button from './ui/Button';
-import { COLORS, globalStyle } from '../utils/globalStyle';
-import { useNavigation } from '@react-navigation/native';
-import { routes } from '../settings/routes';
+import {COLORS, globalStyle} from '../utils/globalStyle';
+import {useNavigation} from '@react-navigation/native';
+import {routes} from '../settings/routes';
+import {getProfile, isFirstConnection} from '../utils/profile';
+import {TProfile} from '../types/profile';
 
 export default function AuthPage() {
   const [mode, setMode] = useState<'login' | 'register'>('login');
@@ -29,19 +31,27 @@ export default function AuthPage() {
 
   async function signInWithEmail() {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
+    const {data, error} = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     });
 
+    if (data.session) {
+      const profile = await getProfile(data.session);
+      if (profile && isFirstConnection(profile as TProfile)) {
+        navigation.navigate(routes.Profile as never);
+        return;
+      }
+    }
+
     if (error) Alert.alert(error.message);
-    else navigation.navigate(routes.HomePage as never);
+    else navigation.navigate(routes.Home as never);
     setLoading(false);
   }
 
   async function signUpWithEmail() {
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const {error} = await supabase.auth.signUp({
       email: email,
       password: password,
     });
@@ -68,7 +78,10 @@ export default function AuthPage() {
         height: '100%',
       }}>
       <View style={[styles.logo, styles.mt20]}>
-        <Image source={require('../assets/img/Logo.png')} style={{ width: 132, height: 132 }} />
+        <Image
+          source={require('../assets/img/Logo.png')}
+          style={{width: 132, height: 132}}
+        />
         <Image source={require('../assets/img/AppName.png')} />
       </View>
       <View style={styles.centered}>
@@ -77,10 +90,9 @@ export default function AuthPage() {
         </Text>
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Text style={{ textAlign: 'center' }}>
+        <Text style={{textAlign: 'center'}}>
           Please enter your email and your password to{' '}
-          {mode === 'login' ? 'sign in' : 'sign up'}
-          .
+          {mode === 'login' ? 'sign in' : 'sign up'}.
         </Text>
         <TextInput
           onChangeText={setEmail}
@@ -105,7 +117,8 @@ export default function AuthPage() {
 
       <View style={styles.verticallySpaced}>
         <Button
-          style={{ marginBottom: 16 }}
+          loading={loading}
+          style={{marginBottom: 16}}
           text={mode === 'login' ? 'Sign in' : 'Sign up'}
           disabled={loading}
           onPress={() =>
@@ -113,12 +126,12 @@ export default function AuthPage() {
           }
         />
         <View
-          style={{ display: 'flex', flexDirection: 'row', alignSelf: 'center' }}>
-          <Text style={{ marginRight: 2 }}>
+          style={{display: 'flex', flexDirection: 'row', alignSelf: 'center'}}>
+          <Text style={{marginRight: 2}}>
             {mode === 'login' ? 'Not registered yet ?' : 'Already registered ?'}
           </Text>
           <TouchableOpacity disabled={loading} onPress={() => toggleMode()}>
-            <Text style={{ color: COLORS.primary }}>
+            <Text style={{color: COLORS.primary}}>
               {mode === 'login' ? 'Sign up' : 'Sign in'}
             </Text>
           </TouchableOpacity>
@@ -141,7 +154,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-evenly'
+    justifyContent: 'space-evenly',
   },
   centered: {
     display: 'flex',

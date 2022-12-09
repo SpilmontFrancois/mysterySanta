@@ -6,18 +6,17 @@ import {
   TouchableHighlight,
   TouchableOpacity,
 } from 'react-native';
-import {useProfile} from '../hooks/useProfile';
-import Loader from './ui/Loader';
 import {supabase} from '../lib/supabase';
 import Avatar from './profile/Avatar';
 import ProfileForm from './profile/ProfileForm';
 import {COLORS} from '../utils/globalStyle';
 import {faSignOutAlt} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {useProfile} from '../utils/auth/ProfileContext';
 
 const ProfilePage = () => {
-  const {loading, profile} = useProfile();
-  if (loading || !profile) return <Loader />;
+  const {profile} = useProfile();
+
   return (
     <ScrollView style={styles.container}>
       <TouchableHighlight

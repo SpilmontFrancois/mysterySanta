@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {getParticipations} from '../utils/participation';
-import {useProfile} from '../hooks/useProfile';
 import {TParticipation} from '../types/participation';
 import Loader from './ui/Loader';
 import EventParticipation from './EventParticipation';
 import WaitingList from './WaitingList';
+import Participation from './Participation';
+import {useProfile} from '../utils/auth/ProfileContext';
 
 const HomePage = () => {
-  const {loading, profile} = useProfile();
+  const {profile} = useProfile();
   const [participations, setParticipations] = useState<
     TParticipation[] | undefined
   >(undefined);
@@ -22,8 +23,8 @@ const HomePage = () => {
     }
   }, [profile]);
 
-  if (loading || !profile) return <Loader />;
-
+  if (!profile) return <Loader />;
+  if (hasParticipation) return <Participation profile={profile} />;
   if (profile.waiting_list) return <WaitingList profile={profile} />;
 
   return <EventParticipation profile={profile} />;

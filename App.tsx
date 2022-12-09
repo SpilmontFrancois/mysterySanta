@@ -31,17 +31,18 @@ import Loader from './components/ui/Loader';
 import {TProfile} from './types/profile';
 import {isFirstConnection} from './utils/profile';
 import TabBar from './components/TabBar';
+import {ProfileProvider} from './utils/auth/ProfileContext';
 
 const Tab = createBottomTabNavigator();
 
 const App = () => {
   const [profileLoading, setProfileLoading] = useState(true);
   const [session, setSession] = useState<Session | null>(null);
-  const [userFirstConnection, setUserFirstConnection] = useState(false);
+  const [profile, setProfile] = useState<TProfile | null>(null);
+
   useEffect(() => {
     supabase.auth.getSession().then(({data: {session: _session}}) => {
       if (!_session) {
-        console.log('LA');
         setProfileLoading(false);
         return supabase.auth.signOut();
       }
@@ -52,9 +53,8 @@ const App = () => {
         .eq('id', _session?.user.id)
         .single()
         .then(({data}) => {
-          if (isFirstConnection(data as TProfile)) {
-            setUserFirstConnection(true);
-          }
+          if (!data) supabase.auth.signOut();
+          setProfile(data as TProfile);
           setProfileLoading(false);
         });
     });
@@ -68,61 +68,65 @@ const App = () => {
   return (
     <NavigationContainer>
       <StatusBar />
-      {session && (
+      {session && profile && (
         <SessionProvider value={session}>
-          <Tab.Navigator
-            initialRouteName={userFirstConnection ? 'Profile' : 'Home'}
-            screenOptions={{
-              tabBarStyle: styles.tabBarStyle,
-              tabBarLabelStyle: styles.tabBarLabelStyle,
-            }}
-            tabBar={props => <TabBar {...props} />}>
-            <Tab.Screen
-              name={routes.Home}
-              component={HomePage}
-              options={{
-                title: 'Home',
-                tabBarIcon: () => (
-                  <FontAwesomeIcon
-                    icon={faHouse}
-                    style={{color: '#98AABC'}}
-                    size={24}
-                  />
-                ),
-                headerShown: false,
+          <ProfileProvider
+            profile={profile}
+            isFirstConnection={isFirstConnection(profile)}>
+            <Tab.Navigator
+              initialRouteName={isFirstConnection(profile) ? 'Profile' : 'Home'}
+              screenOptions={{
+                tabBarStyle: styles.tabBarStyle,
+                tabBarLabelStyle: styles.tabBarLabelStyle,
               }}
-            />
-            <Tab.Screen
-              name={routes.History}
-              component={HistoryPage}
-              options={{
-                title: 'History',
-                tabBarIcon: () => (
-                  <FontAwesomeIcon
-                    icon={faClockRotateLeft}
-                    style={{color: '#98AABC'}}
-                    size={24}
-                  />
-                ),
-                headerShown: false,
-              }}
-            />
-            <Tab.Screen
-              name={routes.Profile}
-              component={ProfilePage}
-              options={{
-                title: 'Profile',
-                tabBarIcon: () => (
-                  <FontAwesomeIcon
-                    icon={faUser}
-                    style={{color: '#98AABC'}}
-                    size={24}
-                  />
-                ),
-                headerShown: false,
-              }}
-            />
-          </Tab.Navigator>
+              tabBar={props => <TabBar {...props} />}>
+              <Tab.Screen
+                name={routes.Home}
+                component={HomePage}
+                options={{
+                  title: 'Home',
+                  tabBarIcon: () => (
+                    <FontAwesomeIcon
+                      icon={faHouse}
+                      style={{color: '#98AABC'}}
+                      size={24}
+                    />
+                  ),
+                  headerShown: false,
+                }}
+              />
+              <Tab.Screen
+                name={routes.History}
+                component={HistoryPage}
+                options={{
+                  title: 'History',
+                  tabBarIcon: () => (
+                    <FontAwesomeIcon
+                      icon={faClockRotateLeft}
+                      style={{color: '#98AABC'}}
+                      size={24}
+                    />
+                  ),
+                  headerShown: false,
+                }}
+              />
+              <Tab.Screen
+                name={routes.Profile}
+                component={ProfilePage}
+                options={{
+                  title: 'Profile',
+                  tabBarIcon: () => (
+                    <FontAwesomeIcon
+                      icon={faUser}
+                      style={{color: '#98AABC'}}
+                      size={24}
+                    />
+                  ),
+                  headerShown: false,
+                }}
+              />
+            </Tab.Navigator>
+          </ProfileProvider>
         </SessionProvider>
       )}
       {!session && <AuthPage />}

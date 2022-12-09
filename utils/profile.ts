@@ -25,7 +25,7 @@ export const getProfile = async (session: Session) => {
   let {data, error, status} = await supabase
     .from('profiles')
     .select('*')
-    .eq('id', session?.user.id)
+    .eq('id', session.user.id)
     .single();
   if (error && status !== 406) {
     throw error;
