@@ -1,27 +1,27 @@
 import React from 'react';
-import {Text, TextInput, View} from 'react-native';
-import {Controller, useForm} from 'react-hook-form';
-import {TProfile} from '../../types/profile';
+import { Text, TextInput, View, StyleSheet } from 'react-native';
+import { Controller, useForm } from 'react-hook-form';
+import { TProfile } from '../../types/profile';
 import Button from '../ui/Button';
-import {globalStyle} from '../../utils/globalStyle';
-import {Picker} from '@react-native-picker/picker';
-import {BUDGETS, updateProfile} from '../../utils/profile';
+import { COLORS, globalStyle } from '../../utils/globalStyle';
+import { Picker } from '@react-native-picker/picker';
+import { BUDGETS, updateProfile } from '../../utils/profile';
 import Line from '../ui/Line';
 import InterestsSelector from './InterestsSelector';
-import {useNavigation} from '@react-navigation/native';
-import {routes} from '../../settings/routes';
+import { useNavigation } from '@react-navigation/native';
+import { routes } from '../../settings/routes';
 import ErrorMessage from '../ui/ErrorMessage';
 
 type Props = {
   user: TProfile;
 };
 
-const ProfileForm = ({user}: Props) => {
+const ProfileForm = ({ user }: Props) => {
   const navigation = useNavigation();
   const {
     control,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
   } = useForm({
     defaultValues: {
       full_name: user.full_name ?? '',
@@ -46,9 +46,9 @@ const ProfileForm = ({user}: Props) => {
           minLength: 2,
           maxLength: 100,
         }}
-        render={({field: {onChange, onBlur, value}}) => (
+        render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            style={[globalStyle.input, {marginVertical: 12}]}
+            style={[globalStyle.input, { marginVertical: 12 }]}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
@@ -67,9 +67,9 @@ const ProfileForm = ({user}: Props) => {
           minLength: 5,
           maxLength: 100,
         }}
-        render={({field: {onChange, onBlur, value}}) => (
+        render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
-            style={[globalStyle.input, {marginVertical: 12}]}
+            style={[globalStyle.input, { marginVertical: 12 }]}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
@@ -86,7 +86,7 @@ const ProfileForm = ({user}: Props) => {
         rules={{
           required: 'Please select your budget',
         }}
-        render={({field: {onChange, value}}) => (
+        render={({ field: { onChange, value } }) => (
           <View
             style={{
               borderWidth: 1,
@@ -104,15 +104,15 @@ const ProfileForm = ({user}: Props) => {
       />
       <ErrorMessage>{errors.budget?.message}</ErrorMessage>
       <Line />
-      <Text style={[globalStyle.lightTitle, {marginBottom: 12}]}>
+      <Text style={[globalStyle.lightTitle, { marginBottom: 12 }]}>
         Choose some interests
       </Text>
       <Controller
         control={control}
         rules={{
-          required: 'Please choos at least one interest',
+          required: 'Please choose at least one interest',
         }}
-        render={({field: {onChange, value}}) => (
+        render={({ field: { onChange, value } }) => (
           <InterestsSelector onChange={onChange} userInterests={value} />
         )}
         name="interests"
@@ -123,10 +123,20 @@ const ProfileForm = ({user}: Props) => {
       <Button
         text="Submit"
         onPress={handleSubmit(onSubmit)}
-        style={{marginVertical: 24}}
+        style={
+          Object.keys(errors).length > 0 ? { ...styles.button, opacity: 0.75 } : styles.button
+        }
+        disabled={Object.keys(errors).length > 0}
       />
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: COLORS.primary,
+    marginVertical: 24
+  },
+});
 
 export default ProfileForm;
