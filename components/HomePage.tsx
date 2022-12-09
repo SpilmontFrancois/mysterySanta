@@ -8,7 +8,6 @@ import {Image, StyleSheet, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Loader from './ui/Loader';
 
-// TODO : get it from active event
 const eventEndDate = new Date('2022-12-25T00:00:00').getTime();
 
 const HomePage = () => {
@@ -102,8 +101,6 @@ const HomePage = () => {
                 waiting_list: true,
               })
               .eq('id', profile.id);
-          } else {
-            // Une participation existe déjà
           }
         }
       }
