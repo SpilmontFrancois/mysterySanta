@@ -11,11 +11,13 @@ import {useTimer} from '../../hooks/useTimer';
 
 type Props = {
   profile: TProfile;
+  eventEndDate: string;
 };
 
-const Event = ({profile}: Props) => {
-  const formattedTimer = useTimer();
+const Event = ({profile, eventEndDate}: Props) => {
   const [loading, setLoading] = useState(false);
+  const formattedTimer = useTimer(eventEndDate);
+
   const onPress = () => {
     setLoading(true);
     handleParticipation(profile)

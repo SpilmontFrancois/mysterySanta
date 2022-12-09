@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 
-export const useTimer = () => {
-  const eventEndDate = new Date('2022-12-25T00:00:00').getTime();
+export const useTimer = (endDate: string) => {
+  const eventEndDate = new Date(endDate).getTime();
   const [formattedTimer, setFormattedTimer] = useState('');
 
   useEffect(() => {

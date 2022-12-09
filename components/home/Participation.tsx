@@ -68,8 +68,7 @@ const Participation = ({profile, participation}: Props) => {
         )}
         <Text style={styles.text}>{receiverProfile?.full_name}</Text>
         <Text style={[styles.lightText, {marginTop: 16}]}>
-          Here are these areas of interest to help you in the choice of his gift
-          :
+          Here are his interests to help you in the choice of his gift :
         </Text>
         <View
           style={{
