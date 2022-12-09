@@ -149,15 +149,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingTop: 50,
-    paddingLeft: 50,
-    paddingRight: 50,
+    paddingHorizontal: 50,
   },
   iconsBottom: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingLeft: 50,
-    paddingRight: 50,
+    paddingHorizontal: 50,
   },
   text: {
     textAlign: 'center',
@@ -172,8 +170,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   button: {
-    marginLeft: 50,
-    marginRight: 50,
+    marginHorizontal: 50,
     marginTop: 50,
     padding: 20,
   },
