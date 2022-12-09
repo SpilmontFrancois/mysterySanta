@@ -13,7 +13,6 @@ import Loader from './ui/Loader';
 import { TProfile } from '../types/profile';
 import { supabase } from '../lib/supabase';
 import { TEvents } from '../types/event';
-import { getEvent } from '../utils/event';
 
 const HistoryPage = () => {
   const [receiver, setReceiver] = React.useState<TProfile | undefined>(
@@ -54,16 +53,6 @@ const HistoryPage = () => {
     }
   }, [participations]);
 
-  //Ca ne récupère pas le bon event
-  // React.useEffect(() => {
-  //   if (participations && participations.length > 0) {
-  //     getEvent(participations?.[0].event_id).then(event => {
-  //       setEvent(event);
-  //     });
-  //   }
-  // });
-
-  //get the year of the participation
   React.useEffect(() => {
     if (participations && participations.length > 0) {
       const evts: TEvents[] = [];
@@ -150,7 +139,6 @@ const styles = StyleSheet.create({
     color: '#4F2F0D',
   },
   titleHistory: {
-    //light bold
     fontWeight: 'bold',
     fontSize: 30,
     textAlign: 'center',
