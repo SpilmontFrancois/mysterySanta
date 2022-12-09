@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     width: '100%',
     height: '100%',
-    position: 'relative',
+    backgroundColor: COLORS.neutral['100'],
   },
 });
 export default ProfilePage;
