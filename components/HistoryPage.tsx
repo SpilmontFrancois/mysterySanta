@@ -121,8 +121,6 @@ const HistoryPage = () => {
                     </Text>
                   </View>
               }
-
-
             </View>
           ))}
         </ScrollView>
@@ -163,7 +161,7 @@ const styles = StyleSheet.create({
   active: {},
   notActive: {
     opacity: 0.85,
-    width: '85%',
+    width: '80%',
     marginLeft: 'auto',
     marginRight: 'auto',
   },
