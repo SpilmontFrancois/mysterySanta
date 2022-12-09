@@ -1,12 +1,17 @@
+import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import {COLORS} from '../utils/globalStyle';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {customRoutes} from '../settings/routes';
-
-type Props = {};
+import {useProfile} from '../hooks/useProfile';
+import {isFirstConnection} from '../utils/profile';
 
 const TabBar = (props: BottomTabBarProps) => {
+  const {profile, loading} = useProfile();
+
+  if (loading) return null;
+
   return (
     <View style={styles.container}>
       <View style={styles.innerContainer}>
@@ -15,19 +20,24 @@ const TabBar = (props: BottomTabBarProps) => {
             customRoutes[route.name as keyof typeof customRoutes];
           const isFocused = props.state.index === index;
           const onPress = () => {
-            const event = props.navigation.emit({
-              type: 'tabPress',
-              target: route.key,
-              canPreventDefault: true,
-            });
+            if (profile && !isFirstConnection(profile)) {
+              const event = props.navigation.emit({
+                type: 'tabPress',
+                target: route.key,
+                canPreventDefault: true,
+              });
 
-            if (!isFocused && !event.defaultPrevented) {
-              props.navigation.navigate(route.name);
+              if (!isFocused && !event.defaultPrevented) {
+                props.navigation.navigate(route.name);
+              }
             }
           };
           if (customRoute && customRoute.tab && customRoute.icon) {
             return (
-              <TouchableOpacity style={styles.tabButton} onPress={onPress}>
+              <TouchableOpacity
+                key={route.key}
+                style={styles.tabButton}
+                onPress={onPress}>
                 <FontAwesomeIcon
                   icon={customRoute.icon}
                   size={24}

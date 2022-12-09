@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   StyleProp,
   Text,
   TouchableOpacity,
@@ -12,6 +13,7 @@ type Props = TouchableOpacityProps & {
   secondary?: boolean;
   text: string;
   style?: StyleProp<ViewStyle>;
+  loading?: boolean;
 };
 
 const Button = (props: Props) => {
@@ -22,15 +24,19 @@ const Button = (props: Props) => {
         props.secondary ? globalStyle.secondaryButton : globalStyle.button,
         props.style,
       ]}>
-      <Text
-        style={{
-          color: props.secondary ? COLORS.primary : COLORS.neutral['100'],
-          fontWeight: 'bold',
-          textAlign: 'center',
-          fontSize: 16,
-        }}>
-        {props.text}
-      </Text>
+      {props.loading ? (
+        <ActivityIndicator size={'large'} color={COLORS.neutral['100']} />
+      ) : (
+        <Text
+          style={{
+            color: props.secondary ? COLORS.primary : COLORS.neutral['100'],
+            fontWeight: 'bold',
+            textAlign: 'center',
+            fontSize: 16,
+          }}>
+          {props.text}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 };

@@ -30,11 +30,9 @@ import {routes} from './settings/routes';
 import Loader from './components/ui/Loader';
 import {TProfile} from './types/profile';
 import {isFirstConnection} from './utils/profile';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 import TabBar from './components/TabBar';
 
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
 
 const App = () => {
   const [profileLoading, setProfileLoading] = useState(true);
@@ -43,6 +41,7 @@ const App = () => {
   useEffect(() => {
     supabase.auth.getSession().then(({data: {session: _session}}) => {
       if (!_session) {
+        console.log('LA');
         setProfileLoading(false);
         return supabase.auth.signOut();
       }
@@ -53,7 +52,6 @@ const App = () => {
         .eq('id', _session?.user.id)
         .single()
         .then(({data}) => {
-          console.log('IS FIRST : ', isFirstConnection(data as TProfile));
           if (isFirstConnection(data as TProfile)) {
             setUserFirstConnection(true);
           }
@@ -62,7 +60,6 @@ const App = () => {
     });
 
     supabase.auth.onAuthStateChange((_event, _session) => {
-      console.log('CHANGE CHANGE CHANGE');
       setSession(_session);
     });
   }, []);

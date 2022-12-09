@@ -34,7 +34,7 @@ const ProfileForm = ({user}: Props) => {
 
   const onSubmit = (data: Partial<TProfile>) => {
     updateProfile(user.id, data).then(() => {
-      navigation.navigate(routes.HomePage as never);
+      navigation.navigate(routes.Home as never);
     });
   };
   return (

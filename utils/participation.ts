@@ -3,6 +3,7 @@ import {TParticipation} from '../types/participation';
 import {TProfile} from '../types/profile';
 import {getCurrentEvent} from './event';
 import {Alert} from 'react-native';
+import {toggleWaitingList} from './profile';
 
 export const getParticipations = async (userId: string) => {
   const {data, error} = await supabase
@@ -28,11 +29,16 @@ export const createParticipation = async (
   return data;
 };
 
+export enum PARTICIPATION_STATUS {
+  'CREATED',
+  'WAITING_LIST',
+}
+
 export const handleParticipation = async (user: TProfile) => {
   try {
     const {data: matchingUser} = await supabase
       .from('profiles')
-      .select('id')
+      .select('*')
       .eq('waiting_list', true)
       .eq('budget', user.budget)
       .neq('id', user.id)
@@ -49,27 +55,24 @@ export const handleParticipation = async (user: TProfile) => {
           user2_hasPresent: false,
           event_id: currentEvent,
         });
-        console.log('CURRENT EVENT');
+
+        if (user.waiting_list) {
+          await toggleWaitingList(user.id, false);
+        }
+        if (matchingUser.waiting_list) {
+          await toggleWaitingList(matchingUser.id, false);
+        }
+
+        return PARTICIPATION_STATUS.CREATED;
       } else
         Alert.alert('No event', 'There are currently no events in progress');
     } else {
-      console.log('ADD TO WAITING LIST');
       await toggleWaitingList(user.id, true);
+      return PARTICIPATION_STATUS.WAITING_LIST;
     }
   } catch (e) {
     console.error(e);
+  } finally {
+    await supabase.auth.refreshSession();
   }
-};
-
-const toggleWaitingList = async (userId: string, value: boolean) => {
-  const {data, error} = await supabase
-    .from('profiles')
-    .update({
-      waiting_list: value,
-    })
-    .eq('id', userId);
-
-  if (error) throw new Error(error.message);
-
-  return data;
 };

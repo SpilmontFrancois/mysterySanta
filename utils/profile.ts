@@ -58,3 +58,28 @@ export const updateAvatar = async (userId: string, avatarUrl: string) => {
   await supabase.auth.refreshSession();
   return data;
 };
+
+export const toggleWaitingList = async (userId: string, value: boolean) => {
+  const {data, error} = await supabase
+    .from('profiles')
+    .update({
+      waiting_list: value,
+    })
+    .eq('id', userId);
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
+export const getWaitingListQueue = async (budget: string) => {
+  const {data, error} = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('waiting_list', true)
+    .eq('budget', budget);
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
