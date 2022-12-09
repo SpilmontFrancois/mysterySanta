@@ -6,14 +6,13 @@ import {
   Text,
   View,
 } from 'react-native';
-import {useSession} from '../utils/auth/SessionContext';
-import {getParticipation} from '../utils/participation';
-import {TParticipations} from '../types/participation';
+import { useSession } from '../utils/auth/SessionContext';
+import { getParticipation } from '../utils/participation';
+import { TParticipations } from '../types/participation';
 import Loader from './ui/Loader';
-import {TProfile} from '../types/profile';
-import {supabase} from '../lib/supabase';
-import {TEvents} from '../types/event';
-import {getEvent} from '../utils/event';
+import { TProfile } from '../types/profile';
+import { supabase } from '../lib/supabase';
+import { TEvents } from '../types/event';
 
 const HistoryPage = () => {
   const [receiver, setReceiver] = React.useState<TProfile | undefined>(
@@ -24,7 +23,7 @@ const HistoryPage = () => {
     TParticipations[] | undefined
   >(undefined);
 
-  const [event, setEvent] = React.useState<TEvents | undefined>(undefined);
+  const [events, setEvents] = React.useState<TEvents[] | undefined>(undefined);
 
   const session = useSession();
 
@@ -48,44 +47,69 @@ const HistoryPage = () => {
         .select('*')
         .eq('id', receiverId)
         .single()
-        .then(({data}) => {
+        .then(({ data }) => {
           setReceiver(data);
         });
     }
   }, [participations]);
 
-  //Ca ne récupère pas le bon event
   React.useEffect(() => {
     if (participations && participations.length > 0) {
-      getEvent(participations?.[0].event_id).then(event => {
-        setEvent(event);
-      });
-    }
-  });
+      const evts: TEvents[] = [];
 
-  if (!participations) {
-    return <Loader />;
-  }
+      Promise.all(participations.map(participation => {
+        return supabase
+          .from('events')
+          .select('*')
+          .eq('id', participation.event_id)
+          .order('end_date', { ascending: false })
+          .single()
+
+      })).then((data) => {
+        const _events = data.map((d) => d.data as TEvents)
+        setEvents(_events)
+
+      }
+      );
+    }
+  }, [participations]);
+
+  if (!participations) return <Loader />;
 
   return (
     <View>
       <ImageBackground
         source={require('../assets/img/tree.png')}
         style={styles.background}>
-        <ScrollView style={styles.paddingBottom}>
+        <ScrollView>
           <Text style={styles.titleHistory}>Vos participations :</Text>
-          {participations.map(participation => (
-            <View style={styles.items}>
-              <Text>{event?.end_date}</Text>
-              <Text style={styles.title}>Votre Secret Santa de</Text>
-              <Text style={styles.description}>
-                Vous participez actuellement au Secret Santa du mois de
-                Décembre. N'oubliez pas de commander le cadeau de{' '}
-                <Text style={styles.bold}>
-                  {receiver?.full_name?.split(' ')[0]}
-                </Text>{' '}
-                avant le <Text style={styles.bold}>15 Décembre</Text>.
-              </Text>
+          {participations.map((participation, index) => (
+            <View key={participation.id} style={[styles.items, events && events[index]?.end_date.split('-')[0] === new Date().getFullYear().toString() ? styles.active : styles.notActive]}>
+              <Text style={styles.title}>Votre Secret Santa de {events ? events[index]?.end_date.split('-')[0] : ""}</Text>
+
+              {
+                events && events[index]?.end_date.split('-')[0] === new Date().getFullYear().toString() ?
+                  <View>
+                    <Text style={styles.description}>
+                      Vous participez actuellement au Secret Santa du mois de
+                      Décembre. N'oubliez pas de commander le cadeau de{' '}
+                      <Text style={styles.bold}>
+                        {receiver?.full_name?.split(' ')[0]}
+                      </Text>{' '}
+                      avant le <Text style={styles.bold}>15 Décembre</Text>.
+                    </Text>
+                  </View>
+                  :
+                  <View>
+                    <Text style={styles.description}>
+                      Vous avez participé au Secret Santa du mois de
+                      Décembre {events ? events[index]?.end_date.split('-')[0] : ""}. Vous avez envoyé un cadeau à{' '}
+                      <Text style={styles.bold}>
+                        {receiver?.full_name?.split(' ')[0]}
+                      </Text>.
+                    </Text>
+                  </View>
+              }
             </View>
           ))}
         </ScrollView>
@@ -115,7 +139,6 @@ const styles = StyleSheet.create({
     color: '#4F2F0D',
   },
   titleHistory: {
-    //light bold
     fontWeight: 'bold',
     fontSize: 30,
     textAlign: 'center',
@@ -123,11 +146,10 @@ const styles = StyleSheet.create({
     color: '#4F2F0D',
     fontFamily: 'lucida grande',
   },
-  paddingBottom: {},
   active: {},
   notActive: {
     opacity: 0.85,
-    width: '85%',
+    width: '80%',
     marginLeft: 'auto',
     marginRight: 'auto',
   },
