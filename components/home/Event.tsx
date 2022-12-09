@@ -23,7 +23,10 @@ const Event = ({profile, eventEndDate}: Props) => {
     handleParticipation(profile)
       .then(participationStatus => {
         if (participationStatus === PARTICIPATION_STATUS.CREATED) {
-          Alert.alert('OUIII CEST CREER');
+          Alert.alert(
+            'Congrats 🎉',
+            'You are now registered for the current event',
+          );
         } else if (participationStatus === PARTICIPATION_STATUS.WAITING_LIST) {
           Alert.alert(
             'No user found for the moment',

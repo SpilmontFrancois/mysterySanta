@@ -17,7 +17,6 @@ const Participation = ({profile, participation}: Props) => {
   const [receiverProfile, setReceiverProfile] = useState<TProfile | undefined>(
     undefined,
   );
-
   const [event, setEvent] = useState<TEvents | undefined>(undefined);
   const receiverId =
     participation.user1_id === profile.id
@@ -25,16 +24,20 @@ const Participation = ({profile, participation}: Props) => {
       : participation.user1_id;
 
   useEffect(() => {
-    getProfile(receiverId).then(_receiverProfile => {
-      setReceiverProfile(_receiverProfile);
-    });
+    getProfile(receiverId)
+      .then(_receiverProfile => {
+        setReceiverProfile(_receiverProfile);
+      })
+      .catch(err => console.error(err));
 
-    getEvent(participation.event_id).then(_event => setEvent(_event));
+    getEvent(participation.event_id)
+      .then(_event => setEvent(_event))
+      .catch(err => console.error(err));
   }, []);
 
   return (
     <ScrollView style={styles.container}>
-      <View>
+      <View style={{marginTop: 32}}>
         <Text style={[globalStyle.lightTitle]}>Welcome,</Text>
         <Text style={globalStyle.title}>{profile.full_name}</Text>
       </View>
@@ -79,7 +82,7 @@ const Participation = ({profile, participation}: Props) => {
           }}>
           {receiverProfile?.interests.map(interest => {
             return (
-              <View style={styles.interestTag}>
+              <View key={interest as string} style={styles.interestTag}>
                 <Text style={{color: COLORS.neutral['100']}}>
                   {interest as string}
                 </Text>
@@ -97,7 +100,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
-    padding: 32,
+    paddingHorizontal: 32,
   },
   text: {
     fontSize: 16,

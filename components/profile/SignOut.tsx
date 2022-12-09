@@ -10,7 +10,9 @@ type Props = {};
 const SignOut = (props: Props) => {
   return (
     <TouchableHighlight
-      onPress={() => supabase.auth.signOut()}
+      onPress={() => {
+        supabase.auth.signOut();
+      }}
       style={{alignSelf: 'flex-end', marginTop: 16}}>
       <TouchableOpacity
         style={{

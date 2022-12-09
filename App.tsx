@@ -59,7 +59,7 @@ const App = () => {
       });
 
     supabase.auth.onAuthStateChange((_event, _session) => {
-      if (!_session) return;
+      if (!_session) return supabase.auth.signOut();
       setSession(_session);
       getProfile(_session.user.id).then(data => {
         if (!data) supabase.auth.signOut();

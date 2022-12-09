@@ -25,10 +25,10 @@ const HomePage = () => {
   useEffect(() => {
     getCurrentEvent().then(_currentEvent => setCurrentEvent(_currentEvent));
   }, []);
-
   if (!profile || !currentEvent) return <Loader />;
-  if (participation)
+  if (participation) {
     return <Participation profile={profile} participation={participation} />;
+  }
   if (profile.waiting_list) return <WaitingList profile={profile} />;
 
   return <Event profile={profile} eventEndDate={currentEvent.end_date} />;

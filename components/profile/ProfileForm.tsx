@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, TextInput, View} from 'react-native';
+import {Alert, StyleSheet, Text, TextInput, View} from 'react-native';
 import {Controller, useForm} from 'react-hook-form';
 import {TProfile} from '../../types/profile';
 import Button from '../ui/Button';
@@ -11,12 +11,15 @@ import InterestsSelector from './InterestsSelector';
 import ErrorMessage from '../ui/ErrorMessage';
 import {useNavigation} from '@react-navigation/native';
 import {routes} from '../../settings/routes';
+import {useProfile} from '../../utils/auth/ProfileContext';
+import {getActiveParticipation} from '../../utils/participation';
 
 type Props = {
   user: TProfile;
 };
 
 const ProfileForm = ({user}: Props) => {
+  const {isFirstConnection} = useProfile();
   const {
     control,
     handleSubmit,
@@ -33,8 +36,23 @@ const ProfileForm = ({user}: Props) => {
   const navigation = useNavigation();
 
   const onSubmit = (data: Partial<TProfile>) => {
-    updateProfile(user.id, data).then(() => {
-      navigation.navigate(routes.Home as never);
+    getActiveParticipation(user.id).then(participation => {
+      if (participation) {
+        Alert.alert(
+          'Error',
+          'you cannot update your profile because you are currently participating in an event',
+        );
+      } else {
+        updateProfile(user.id, data).then(() => {
+          if (isFirstConnection) navigation.navigate(routes.Home as never);
+          else {
+            Alert.alert(
+              'Updated successfully',
+              'Your profile has been updated',
+            );
+          }
+        });
+      }
     });
   };
   return (

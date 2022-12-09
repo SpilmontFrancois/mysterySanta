@@ -27,6 +27,7 @@ export const getActiveParticipation = async (userId: string) => {
     .order('created_at', {ascending: false})
     .single();
 
+  if (!data) return undefined;
   if (currentEvent?.id === data.event_id) {
     return data;
   }
@@ -63,7 +64,6 @@ export const handleParticipation = async (user: TProfile) => {
 
     if (matchingUser) {
       const currentEvent = await getCurrentEvent();
-      console.log('CURRENT EVENT : ', currentEvent);
       if (currentEvent) {
         await createParticipation({
           user1_id: user.id,
