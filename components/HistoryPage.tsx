@@ -82,28 +82,26 @@ const HistoryPage = () => {
         source={require('../assets/img/tree.png')}
         style={styles.background}>
         <ScrollView>
-          <Text style={styles.titleHistory}>Vos participations :</Text>
+          <Text style={styles.titleHistory}>Your Mystery Santa :</Text>
           {participations.map((participation, index) => (
             <View key={participation.id} style={[styles.items, events && events[index]?.end_date.split('-')[0] === new Date().getFullYear().toString() ? styles.active : styles.notActive]}>
-              <Text style={styles.title}>Votre Secret Santa de {events ? events[index]?.end_date.split('-')[0] : ""}</Text>
+              <Text style={styles.title}>Your {events ? events[index]?.end_date.split('-')[0] : ""}'s Mystery Santa</Text>
 
               {
                 events && events[index]?.end_date.split('-')[0] === new Date().getFullYear().toString() ?
                   <View>
                     <Text style={styles.description}>
-                      Vous participez actuellement au Secret Santa du mois de
-                      Décembre. N'oubliez pas de commander le cadeau de{' '}
+                    You are currently participating in the {events ? events[index]?.end_date.split('-')[0] : ""}'s December Secret Santa. Don't forget to order the gift of{' '}
                       <Text style={styles.bold}>
                         {receiver?.full_name?.split(' ')[0]}
                       </Text>{' '}
-                      avant le <Text style={styles.bold}>15 Décembre</Text>.
+                      before <Text style={styles.bold}>December 15th</Text>.
                     </Text>
                   </View>
                   :
                   <View>
                     <Text style={styles.description}>
-                      Vous avez participé au Secret Santa du mois de
-                      Décembre {events ? events[index]?.end_date.split('-')[0] : ""}. Vous avez envoyé un cadeau à{' '}
+                    You participated in the {events ? events[index]?.end_date.split('-')[0] : ""}'s December Secret Santa. You have sent a gift to{' '}
                       <Text style={styles.bold}>
                         {receiver?.full_name?.split(' ')[0]}
                       </Text>.
