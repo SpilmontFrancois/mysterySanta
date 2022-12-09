@@ -1,16 +1,15 @@
+import React from 'react';
 import {Text, TouchableHighlight, TouchableOpacity} from 'react-native';
 import {supabase} from '../../lib/supabase';
 import {COLORS} from '../../utils/globalStyle';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faSignOutAlt} from '@fortawesome/free-solid-svg-icons';
-import React from 'react';
 
-type Props = {};
-
-const SignOut = (props: Props) => {
+const SignOut = () => {
   return (
     <TouchableHighlight
       onPress={() => {
+        console.log('sign out');
         supabase.auth.signOut();
       }}
       style={{alignSelf: 'flex-end', marginTop: 16}}>
@@ -24,7 +23,9 @@ const SignOut = (props: Props) => {
           flexDirection: 'row',
           alignItems: 'center',
         }}
-        onPress={() => supabase.auth.signOut()}>
+        onPress={() => {
+          supabase.auth.signOut();
+        }}>
         <FontAwesomeIcon
           icon={faSignOutAlt}
           style={{color: '#fff'}}

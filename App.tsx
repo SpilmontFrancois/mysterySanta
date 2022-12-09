@@ -44,12 +44,7 @@ const App = () => {
     supabase.auth
       .getSession()
       .then(({data: {session: _session}}) => {
-        if (!_session) return;
         setSession(_session);
-        getProfile(_session.user.id).then(data => {
-          if (!data) supabase.auth.signOut();
-          setProfile(data as TProfile);
-        });
       })
       .catch(err => {
         console.error(err);
@@ -59,14 +54,19 @@ const App = () => {
       });
 
     supabase.auth.onAuthStateChange((_event, _session) => {
-      if (!_session) return supabase.auth.signOut();
+      console.log(_session);
       setSession(_session);
-      getProfile(_session.user.id).then(data => {
+    });
+  }, []);
+
+  useEffect(() => {
+    if (session) {
+      getProfile(session.user.id).then(data => {
         if (!data) supabase.auth.signOut();
         setProfile(data as TProfile);
       });
-    });
-  }, []);
+    }
+  }, [session]);
 
   if (profileLoading) return <Loader />;
   return (
