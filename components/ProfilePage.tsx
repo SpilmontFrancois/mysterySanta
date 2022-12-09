@@ -1,24 +1,28 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableHighlight } from 'react-native';
-import { useProfile } from '../utils/profile';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableHighlight,
+  TouchableOpacity,
+} from 'react-native';
+import {useProfile} from '../hooks/useProfile';
 import Loader from './ui/Loader';
-import { supabase } from '../lib/supabase';
+import {supabase} from '../lib/supabase';
 import Avatar from './profile/Avatar';
 import ProfileForm from './profile/ProfileForm';
-import { COLORS } from '../utils/globalStyle';
-import { TouchableOpacity } from 'react-native';
-import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import {COLORS} from '../utils/globalStyle';
+import {faSignOutAlt} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 
 const ProfilePage = () => {
-  const { loading, profile } = useProfile();
-  console.log(profile);
+  const {loading, profile} = useProfile();
   if (loading || !profile) return <Loader />;
   return (
     <ScrollView style={styles.container}>
       <TouchableHighlight
         onPress={() => supabase.auth.signOut()}
-        style={{ alignSelf: 'flex-end', marginTop: 16 }}>
+        style={{alignSelf: 'flex-end', marginTop: 16}}>
         <TouchableOpacity
           style={{
             backgroundColor: COLORS.neutral[500],
@@ -32,10 +36,10 @@ const ProfilePage = () => {
           onPress={() => supabase.auth.signOut()}>
           <FontAwesomeIcon
             icon={faSignOutAlt}
-            style={{ color: '#fff' }}
+            style={{color: '#fff'}}
             size={24}
           />
-          <Text style={{ color: '#fff', marginLeft: 10 }}>Sign out</Text>
+          <Text style={{color: '#fff', marginLeft: 10}}>Sign out</Text>
         </TouchableOpacity>
       </TouchableHighlight>
       <Avatar userId={profile.id} avatarUrl={profile?.avatar_url} />

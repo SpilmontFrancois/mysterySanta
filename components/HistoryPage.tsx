@@ -6,13 +6,13 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useSession } from '../utils/auth/SessionContext';
-import { getParticipation } from '../utils/participation';
-import { TParticipations } from '../types/participation';
+import {useSession} from '../utils/auth/SessionContext';
+import {getParticipations} from '../utils/participation';
+import {TParticipation} from '../types/participation';
 import Loader from './ui/Loader';
-import { TProfile } from '../types/profile';
-import { supabase } from '../lib/supabase';
-import { TEvents } from '../types/event';
+import {TProfile} from '../types/profile';
+import {supabase} from '../lib/supabase';
+import {TEvents} from '../types/event';
 
 const HistoryPage = () => {
   const [receiver, setReceiver] = React.useState<TProfile | undefined>(
@@ -20,7 +20,7 @@ const HistoryPage = () => {
   );
 
   const [participations, setParticipations] = React.useState<
-    TParticipations[] | undefined
+    TParticipation[] | undefined
   >(undefined);
 
   const [events, setEvents] = React.useState<TEvents[] | undefined>(undefined);
@@ -29,7 +29,7 @@ const HistoryPage = () => {
 
   React.useEffect(() => {
     if (session) {
-      getParticipation(session.user.id).then(participations => {
+      getParticipations(session.user.id).then(participations => {
         setParticipations(participations);
       });
     }
@@ -47,7 +47,7 @@ const HistoryPage = () => {
         .select('*')
         .eq('id', receiverId)
         .single()
-        .then(({ data }) => {
+        .then(({data}) => {
           setReceiver(data);
         });
     }
@@ -57,20 +57,19 @@ const HistoryPage = () => {
     if (participations && participations.length > 0) {
       const evts: TEvents[] = [];
 
-      Promise.all(participations.map(participation => {
-        return supabase
-          .from('events')
-          .select('*')
-          .eq('id', participation.event_id)
-          .order('end_date', { ascending: false })
-          .single()
-
-      })).then((data) => {
-        const _events = data.map((d) => d.data as TEvents)
-        setEvents(_events)
-
-      }
-      );
+      Promise.all(
+        participations.map(participation => {
+          return supabase
+            .from('events')
+            .select('*')
+            .eq('id', participation.event_id)
+            .order('end_date', {ascending: false})
+            .single();
+        }),
+      ).then(data => {
+        const _events = data.map(d => d.data as TEvents);
+        setEvents(_events);
+      });
     }
   }, [participations]);
 
@@ -84,30 +83,48 @@ const HistoryPage = () => {
         <ScrollView>
           <Text style={styles.titleHistory}>Your Mystery Santa :</Text>
           {participations.map((participation, index) => (
-            <View key={participation.id} style={[styles.items, events && events[index]?.end_date.split('-')[0] === new Date().getFullYear().toString() ? styles.active : styles.notActive]}>
-              <Text style={styles.title}>Your {events ? events[index]?.end_date.split('-')[0] : ""}'s Mystery Santa</Text>
+            <View
+              key={participation.id}
+              style={[
+                styles.items,
+                events &&
+                events[index]?.end_date.split('-')[0] ===
+                  new Date().getFullYear().toString()
+                  ? styles.active
+                  : styles.notActive,
+              ]}>
+              <Text style={styles.title}>
+                Your {events ? events[index]?.end_date.split('-')[0] : ''}'s
+                Mystery Santa
+              </Text>
 
-              {
-                events && events[index]?.end_date.split('-')[0] === new Date().getFullYear().toString() ?
-                  <View>
-                    <Text style={styles.description}>
-                    You are currently participating in the {events ? events[index]?.end_date.split('-')[0] : ""}'s December Secret Santa. Don't forget to order the gift of{' '}
-                      <Text style={styles.bold}>
-                        {receiver?.full_name?.split(' ')[0]}
-                      </Text>{' '}
-                      before <Text style={styles.bold}>December 15th</Text>.
+              {events &&
+              events[index]?.end_date.split('-')[0] ===
+                new Date().getFullYear().toString() ? (
+                <View>
+                  <Text style={styles.description}>
+                    You are currently participating in the{' '}
+                    {events ? events[index]?.end_date.split('-')[0] : ''}'s
+                    December Secret Santa. Don't forget to order the gift of{' '}
+                    <Text style={styles.bold}>
+                      {receiver?.full_name?.split(' ')[0]}
+                    </Text>{' '}
+                    before <Text style={styles.bold}>December 15th</Text>.
+                  </Text>
+                </View>
+              ) : (
+                <View>
+                  <Text style={styles.description}>
+                    You participated in the{' '}
+                    {events ? events[index]?.end_date.split('-')[0] : ''}'s
+                    December Secret Santa. You have sent a gift to{' '}
+                    <Text style={styles.bold}>
+                      {receiver?.full_name?.split(' ')[0]}
                     </Text>
-                  </View>
-                  :
-                  <View>
-                    <Text style={styles.description}>
-                    You participated in the {events ? events[index]?.end_date.split('-')[0] : ""}'s December Secret Santa. You have sent a gift to{' '}
-                      <Text style={styles.bold}>
-                        {receiver?.full_name?.split(' ')[0]}
-                      </Text>.
-                    </Text>
-                  </View>
-              }
+                    .
+                  </Text>
+                </View>
+              )}
             </View>
           ))}
         </ScrollView>

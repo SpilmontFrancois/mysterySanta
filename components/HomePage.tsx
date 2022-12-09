@@ -1,24 +1,23 @@
+import React, {useEffect, useState} from 'react';
 import Button from './ui/Button';
-import {useEffect, useState} from 'react';
-import {getParticipation} from '../utils/participation';
-import {supabase} from '../lib/supabase';
-import {useProfile} from '../utils/profile';
-import {TParticipations} from '../types/participation';
+import {getParticipations, handleParticipation} from '../utils/participation';
+import {useProfile} from '../hooks/useProfile';
+import {TParticipation} from '../types/participation';
 import {Image, StyleSheet, Text, View} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
 import Loader from './ui/Loader';
+import {COLORS} from '../utils/globalStyle';
 
 // TODO : get it from active event
 const eventEndDate = new Date('2022-12-25T00:00:00').getTime();
 
 const HomePage = () => {
   const {loading, profile} = useProfile();
-  const [participation, setParticipation] = useState<
-    TParticipations[] | undefined
+  const [participations, setParticipations] = useState<
+    TParticipation[] | undefined
   >(undefined);
 
   const [formattedTimer, setFormattedTimer] = useState('');
-  const navigation = useNavigation();
+  const hasParticipation = participations?.length && participations.length > 0;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -46,128 +45,93 @@ const HomePage = () => {
 
   useEffect(() => {
     if (profile) {
-      getParticipation(profile.id).then(_pcptn => {
-        setParticipation(_pcptn);
+      getParticipations(profile.id).then(_participations => {
+        setParticipations(_participations);
       });
     }
   }, [profile]);
 
-  const participate = async () => {
-    if (profile) {
-      const userMatch = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('waiting_list', true)
-        .eq('budget', profile.budget)
-        .neq('id', profile.id)
-        .order('updated_at', {ascending: true})
-        .limit(1);
-
-      if (userMatch.data && userMatch.data.length > 0) {
-        await supabase
-          .from('profiles')
-          .update({
-            waiting_list: false,
-          })
-          .eq('id', userMatch.data[0].id);
-
-        const event = await supabase
-          .from('events')
-          .select('*')
-          .order('end_date', {ascending: false})
-          .limit(1);
-        if (event.data && event.data.length > 0) {
-          await supabase.from('participations').insert({
-            user1_id: profile.id,
-            user2_id: userMatch.data[0].id,
-            event_id: event.data[0].id,
-          });
-        }
-      } else {
-        const event = await supabase
-          .from('events')
-          .select('*')
-          .order('end_date', {ascending: false})
-          .limit(1);
-        if (event.data && event.data.length > 0) {
-          const participation = await supabase
-            .from('participations')
-            .select('*')
-            .or(`user1_id.eq.${profile.id},user2_id.eq.${profile.id}`)
-            .eq('event_id', event.data[0].id);
-          if (participation.data && participation.data.length === 0) {
-            await supabase
-              .from('profiles')
-              .update({
-                waiting_list: true,
-              })
-              .eq('id', profile.id);
-          } else {
-            // Une participation existe déjà
-          }
-        }
-      }
-    }
-  };
   if (loading) return <Loader />;
 
   return (
-    <>
-      <View style={styles.iconsTop}>
-        <Image source={require('../assets/img/Star.png')} />
-        <Image source={require('../assets/img/TopRight.png')} />
-      </View>
-      <Text style={styles.text}>Temps restant :</Text>
-      <Text style={styles.timer}>{formattedTimer}</Text>
-      <View style={styles.iconsBottom}>
-        <Image source={require('../assets/img/BottomLeft.png')} />
-        <Image source={require('../assets/img/Star.png')} />
+    <View style={styles.container}>
+      <View style={styles.timerContainer}>
+        <View style={styles.iconsTop}>
+          <Image source={require('../assets/img/Star.png')} />
+          <Image source={require('../assets/img/TopRight.png')} />
+        </View>
+        <View>
+          <Text style={styles.text}>Time left :</Text>
+          <Text style={styles.timer}>{formattedTimer}</Text>
+        </View>
+        <View style={styles.iconsBottom}>
+          <Image source={require('../assets/img/BottomLeft.png')} />
+          <Image source={require('../assets/img/Star.png')} />
+        </View>
       </View>
       <Button
         text={
-          participation
-            ? 'Vous avez déjà participé à cet évènement !'
-            : 'Participer au Secret Santa !'
+          hasParticipation
+            ? 'You have already participage \n to this event !'
+            : 'Participate to Secret Santa !'
         }
-        onPress={() => participate()}
-        style={
-          participation ? {...styles.button, opacity: 0.75} : styles.button
-        }
-        disabled={!!participation}
+        onPress={() => {
+          if (profile) handleParticipation(profile);
+        }}
+        style={[
+          hasParticipation ? {...styles.button, opacity: 0.75} : styles.button,
+          {height: 80},
+        ]}
+        disabled={!!hasParticipation}
       />
       <Image
         source={require('../assets/img/Chimney.png')}
         style={styles.bottomImg}
       />
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    paddingTop: 64,
+    width: '100%',
+    height: '100%',
+    backgroundColor: COLORS.neutral['100'],
+  },
+  timerContainer: {
+    width: '100%',
+    height: 200,
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  icon: {
+    width: 40,
+    height: 40,
+  },
   iconsTop: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingTop: 50,
-    paddingHorizontal: 50,
+    paddingHorizontal: 48,
   },
   iconsBottom: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 50,
+    paddingHorizontal: 48,
   },
   text: {
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#000',
+    color: COLORS.neutral['700'],
   },
   timer: {
     textAlign: 'center',
     fontSize: 40,
     fontWeight: 'bold',
-    color: '#000',
+    color: COLORS.neutral['900'],
   },
   button: {
     marginHorizontal: 50,

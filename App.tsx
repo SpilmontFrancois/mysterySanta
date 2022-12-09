@@ -9,7 +9,6 @@
  */
 
 import {NavigationContainer} from '@react-navigation/native';
-
 import React, {useEffect, useState} from 'react';
 import {StatusBar, StyleSheet} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -29,48 +28,60 @@ import {SessionProvider} from './utils/auth/SessionContext';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {routes} from './settings/routes';
 import Loader from './components/ui/Loader';
+import {TProfile} from './types/profile';
+import {isFirstConnection} from './utils/profile';
+import {createNativeStackNavigator} from 'react-native-screens/native-stack';
+import TabBar from './components/TabBar';
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
 const App = () => {
-  const [sessionLoading, setSessionLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(true);
   const [session, setSession] = useState<Session | null>(null);
-  const [isFirstConnection, setIsFirstConnection] = useState(true);
+  const [userFirstConnection, setUserFirstConnection] = useState(false);
   useEffect(() => {
-    supabase.auth
-      .getSession()
-      .then(({data: {session: _session}}) => {
-        setSession(_session);
-        supabase
-          .from('profiles')
-          .select('updated_at')
-          .eq('id', _session?.user.id)
-          .single()
-          .then(({data}) => {
-            if (data && data.updated_at) setIsFirstConnection(false);
-          });
-      })
-      .finally(() => setSessionLoading(false));
+    supabase.auth.getSession().then(({data: {session: _session}}) => {
+      if (!_session) {
+        setProfileLoading(false);
+        return supabase.auth.signOut();
+      }
+      setSession(_session);
+      supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', _session?.user.id)
+        .single()
+        .then(({data}) => {
+          console.log('IS FIRST : ', isFirstConnection(data as TProfile));
+          if (isFirstConnection(data as TProfile)) {
+            setUserFirstConnection(true);
+          }
+          setProfileLoading(false);
+        });
+    });
 
     supabase.auth.onAuthStateChange((_event, _session) => {
+      console.log('CHANGE CHANGE CHANGE');
       setSession(_session);
     });
   }, []);
 
-  if (sessionLoading) return <Loader />;
+  if (profileLoading) return <Loader />;
   return (
     <NavigationContainer>
       <StatusBar />
       {session && (
         <SessionProvider value={session}>
           <Tab.Navigator
-            initialRouteName={'Home'}
+            initialRouteName={userFirstConnection ? 'Profile' : 'Home'}
             screenOptions={{
               tabBarStyle: styles.tabBarStyle,
               tabBarLabelStyle: styles.tabBarLabelStyle,
-            }}>
+            }}
+            tabBar={props => <TabBar {...props} />}>
             <Tab.Screen
-              name={routes.HomePage}
+              name={routes.Home}
               component={HomePage}
               options={{
                 title: 'Home',

@@ -1,36 +1,37 @@
 import React from 'react';
-import { Text, TextInput, View, StyleSheet } from 'react-native';
-import { Controller, useForm } from 'react-hook-form';
-import { TProfile } from '../../types/profile';
+import {StyleSheet, Text, TextInput, View} from 'react-native';
+import {Controller, useForm} from 'react-hook-form';
+import {TProfile} from '../../types/profile';
 import Button from '../ui/Button';
-import { COLORS, globalStyle } from '../../utils/globalStyle';
-import { Picker } from '@react-native-picker/picker';
-import { BUDGETS, updateProfile } from '../../utils/profile';
+import {COLORS, globalStyle} from '../../utils/globalStyle';
+import {Picker} from '@react-native-picker/picker';
+import {BUDGETS, updateProfile} from '../../utils/profile';
 import Line from '../ui/Line';
 import InterestsSelector from './InterestsSelector';
-import { useNavigation } from '@react-navigation/native';
-import { routes } from '../../settings/routes';
 import ErrorMessage from '../ui/ErrorMessage';
+import {useNavigation} from '@react-navigation/native';
+import {routes} from '../../settings/routes';
 
 type Props = {
   user: TProfile;
 };
 
-const ProfileForm = ({ user }: Props) => {
-  const navigation = useNavigation();
+const ProfileForm = ({user}: Props) => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: {errors},
   } = useForm({
     defaultValues: {
       full_name: user.full_name ?? '',
-      avatar_url: user.avatar_url ?? '',
       budget: user.budget ?? '',
       address: user.address ?? '',
       interests: user.interests ?? [],
     },
   });
+
+  const navigation = useNavigation();
+
   const onSubmit = (data: Partial<TProfile>) => {
     updateProfile(user.id, data).then(() => {
       navigation.navigate(routes.HomePage as never);
@@ -46,9 +47,9 @@ const ProfileForm = ({ user }: Props) => {
           minLength: 2,
           maxLength: 100,
         }}
-        render={({ field: { onChange, onBlur, value } }) => (
+        render={({field: {onChange, onBlur, value}}) => (
           <TextInput
-            style={[globalStyle.input, { marginVertical: 12 }]}
+            style={[globalStyle.input, {marginVertical: 12}]}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
@@ -67,9 +68,9 @@ const ProfileForm = ({ user }: Props) => {
           minLength: 5,
           maxLength: 100,
         }}
-        render={({ field: { onChange, onBlur, value } }) => (
+        render={({field: {onChange, onBlur, value}}) => (
           <TextInput
-            style={[globalStyle.input, { marginVertical: 12 }]}
+            style={[globalStyle.input, {marginVertical: 12}]}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
@@ -86,7 +87,7 @@ const ProfileForm = ({ user }: Props) => {
         rules={{
           required: 'Please select your budget',
         }}
-        render={({ field: { onChange, value } }) => (
+        render={({field: {onChange, value}}) => (
           <View
             style={{
               borderWidth: 1,
@@ -104,7 +105,7 @@ const ProfileForm = ({ user }: Props) => {
       />
       <ErrorMessage>{errors.budget?.message}</ErrorMessage>
       <Line />
-      <Text style={[globalStyle.lightTitle, { marginBottom: 12 }]}>
+      <Text style={[globalStyle.lightTitle, {marginBottom: 12}]}>
         Choose some interests
       </Text>
       <Controller
@@ -112,7 +113,7 @@ const ProfileForm = ({ user }: Props) => {
         rules={{
           required: 'Please choose at least one interest',
         }}
-        render={({ field: { onChange, value } }) => (
+        render={({field: {onChange, value}}) => (
           <InterestsSelector onChange={onChange} userInterests={value} />
         )}
         name="interests"
@@ -124,7 +125,9 @@ const ProfileForm = ({ user }: Props) => {
         text="Submit"
         onPress={handleSubmit(onSubmit)}
         style={
-          Object.keys(errors).length > 0 ? { ...styles.button, opacity: 0.75 } : styles.button
+          Object.keys(errors).length > 0
+            ? {...styles.button, opacity: 0.75}
+            : styles.button
         }
         disabled={Object.keys(errors).length > 0}
       />
@@ -135,7 +138,7 @@ const ProfileForm = ({ user }: Props) => {
 const styles = StyleSheet.create({
   button: {
     backgroundColor: COLORS.primary,
-    marginVertical: 24
+    marginVertical: 24,
   },
 });
 

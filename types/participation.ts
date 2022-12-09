@@ -1,3 +1,3 @@
-import { definitions } from "./supabase";
+import {definitions} from './supabase';
 
-export type TParticipations = definitions["participations"];
+export type TParticipation = definitions['participations'];

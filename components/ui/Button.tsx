@@ -5,7 +5,7 @@ import {
   TouchableOpacityProps,
   ViewStyle,
 } from 'react-native';
-import { COLORS, globalStyle } from '../../utils/globalStyle';
+import {COLORS, globalStyle} from '../../utils/globalStyle';
 import React from 'react';
 
 type Props = TouchableOpacityProps & {
@@ -26,6 +26,8 @@ const Button = (props: Props) => {
         style={{
           color: props.secondary ? COLORS.primary : COLORS.neutral['100'],
           fontWeight: 'bold',
+          textAlign: 'center',
+          fontSize: 16,
         }}>
         {props.text}
       </Text>

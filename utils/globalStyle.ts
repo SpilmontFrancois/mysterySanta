@@ -30,7 +30,6 @@ export const globalStyle = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     borderRadius: 12,
-    width: '100%',
   },
   secondaryButton: {
     alignItems: 'center',
