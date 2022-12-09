@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {TProfile} from '../types/profile';
-import {COLORS, globalStyle} from '../utils/globalStyle';
-import {getWaitingListQueue} from '../utils/profile';
+import {TProfile} from '../../types/profile';
+import {COLORS, globalStyle} from '../../utils/globalStyle';
+import {getWaitingListQueue} from '../../utils/profile';
 
 type Props = {
   profile: TProfile;

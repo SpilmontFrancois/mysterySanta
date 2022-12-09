@@ -33,8 +33,7 @@ export const getCurrentEvent = async () => {
   if (error) throw new Error(error.message);
 
   const currentDate = new Date();
-
-  if (data?.[0].end_date > currentDate) {
-    return data?.[0].id as number;
+  if (new Date(data?.[0].end_date) > currentDate) {
+    return data?.[0] as TEvents;
   }
 };

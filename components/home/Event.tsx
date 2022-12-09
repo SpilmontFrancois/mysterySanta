@@ -1,19 +1,19 @@
 import {Alert, Image, StyleSheet, Text, View} from 'react-native';
-import Button from './ui/Button';
+import Button from '../ui/Button';
 import {
   handleParticipation,
   PARTICIPATION_STATUS,
-} from '../utils/participation';
+} from '../../utils/participation';
 import React, {useState} from 'react';
-import {COLORS} from '../utils/globalStyle';
-import {TProfile} from '../types/profile';
-import {useTimer} from '../hooks/useTimer';
+import {COLORS} from '../../utils/globalStyle';
+import {TProfile} from '../../types/profile';
+import {useTimer} from '../../hooks/useTimer';
 
 type Props = {
   profile: TProfile;
 };
 
-const EventParticipation = ({profile}: Props) => {
+const Event = ({profile}: Props) => {
   const formattedTimer = useTimer();
   const [loading, setLoading] = useState(false);
   const onPress = () => {
@@ -21,6 +21,7 @@ const EventParticipation = ({profile}: Props) => {
     handleParticipation(profile)
       .then(participationStatus => {
         if (participationStatus === PARTICIPATION_STATUS.CREATED) {
+          Alert.alert('OUIII CEST CREER');
         } else if (participationStatus === PARTICIPATION_STATUS.WAITING_LIST) {
           Alert.alert(
             'No user found for the moment',
@@ -40,8 +41,8 @@ const EventParticipation = ({profile}: Props) => {
     <View style={styles.container}>
       <View style={styles.timerContainer}>
         <View style={styles.iconsTop}>
-          <Image source={require('../assets/img/Star.png')} />
-          <Image source={require('../assets/img/TopRight.png')} />
+          <Image source={require('../../assets/img/Star.png')} />
+          <Image source={require('../../assets/img/TopRight.png')} />
         </View>
         <View>
           <Text style={styles.text}>Time left :</Text>
@@ -49,8 +50,8 @@ const EventParticipation = ({profile}: Props) => {
           <Text style={styles.subText}>Before the event ends</Text>
         </View>
         <View style={styles.iconsBottom}>
-          <Image source={require('../assets/img/BottomLeft.png')} />
-          <Image source={require('../assets/img/Star.png')} />
+          <Image source={require('../../assets/img/BottomLeft.png')} />
+          <Image source={require('../../assets/img/Star.png')} />
         </View>
       </View>
       <Button
@@ -60,7 +61,7 @@ const EventParticipation = ({profile}: Props) => {
         style={[styles.button, {height: 80}]}
       />
       <Image
-        source={require('../assets/img/Chimney.png')}
+        source={require('../../assets/img/Chimney.png')}
         style={styles.bottomImg}
       />
     </View>
@@ -122,4 +123,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EventParticipation;
+export default Event;

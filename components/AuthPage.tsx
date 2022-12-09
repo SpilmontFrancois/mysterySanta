@@ -37,7 +37,7 @@ export default function AuthPage() {
     });
 
     if (data.session) {
-      const profile = await getProfile(data.session);
+      const profile = await getProfile(data.session.user.id);
       if (profile && isFirstConnection(profile as TProfile)) {
         navigation.navigate(routes.Profile as never);
         return;

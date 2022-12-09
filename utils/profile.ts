@@ -1,4 +1,3 @@
-import {Session} from '@supabase/supabase-js';
 import {supabase} from '../lib/supabase';
 import {TProfile} from '../types/profile';
 
@@ -21,11 +20,11 @@ export const isFirstConnection = (user: TProfile) => {
     user.full_name
   );
 };
-export const getProfile = async (session: Session) => {
+export const getProfile = async (userId: string) => {
   let {data, error, status} = await supabase
     .from('profiles')
     .select('*')
-    .eq('id', session.user.id)
+    .eq('id', userId)
     .single();
   if (error && status !== 406) {
     throw error;

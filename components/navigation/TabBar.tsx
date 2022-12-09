@@ -1,11 +1,11 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
-import {COLORS} from '../utils/globalStyle';
+import {COLORS} from '../../utils/globalStyle';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {customRoutes} from '../settings/routes';
-import {isFirstConnection} from '../utils/profile';
-import {useProfile} from '../utils/auth/ProfileContext';
+import {customRoutes} from '../../settings/routes';
+import {isFirstConnection} from '../../utils/profile';
+import {useProfile} from '../../utils/auth/ProfileContext';
 
 const TabBar = (props: BottomTabBarProps) => {
   const {profile} = useProfile();

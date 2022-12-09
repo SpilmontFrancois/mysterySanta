@@ -17,6 +17,22 @@ export const getParticipations = async (userId: string) => {
   return data as TParticipation[];
 };
 
+export const getActiveParticipation = async (userId: string) => {
+  const currentEvent = await getCurrentEvent();
+
+  const {data, error} = await supabase
+    .from('participations')
+    .select(`*`)
+    .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
+    .order('created_at', {ascending: false})
+    .single();
+
+  if (currentEvent?.id === data.event_id) {
+    return data;
+  }
+  if (error) throw new Error(error.message);
+};
+
 export const createParticipation = async (
   participation: Omit<TParticipation, 'id' | 'created_at'>,
 ) => {
@@ -47,13 +63,14 @@ export const handleParticipation = async (user: TProfile) => {
 
     if (matchingUser) {
       const currentEvent = await getCurrentEvent();
+      console.log('CURRENT EVENT : ', currentEvent);
       if (currentEvent) {
         await createParticipation({
           user1_id: user.id,
           user2_id: matchingUser.id,
           user1_hasPresent: false,
           user2_hasPresent: false,
-          event_id: currentEvent,
+          event_id: currentEvent.id,
         });
 
         if (user.waiting_list) {

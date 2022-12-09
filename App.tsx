@@ -12,7 +12,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {StatusBar, StyleSheet} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import HomePage from './components/HomePage';
+import HomePage from './components/home/HomePage';
 import HistoryPage from './components/HistoryPage';
 import {
   faClockRotateLeft,
@@ -23,14 +23,14 @@ import {Session} from '@supabase/supabase-js';
 import {supabase} from './lib/supabase';
 import {COLORS} from './utils/globalStyle';
 import AuthPage from './components/AuthPage';
-import ProfilePage from './components/ProfilePage';
+import ProfilePage from './components/profile/ProfilePage';
 import {SessionProvider} from './utils/auth/SessionContext';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {routes} from './settings/routes';
 import Loader from './components/ui/Loader';
 import {TProfile} from './types/profile';
-import {isFirstConnection} from './utils/profile';
-import TabBar from './components/TabBar';
+import {getProfile, isFirstConnection} from './utils/profile';
+import TabBar from './components/navigation/TabBar';
 import {ProfileProvider} from './utils/auth/ProfileContext';
 
 const Tab = createBottomTabNavigator();
@@ -41,26 +41,30 @@ const App = () => {
   const [profile, setProfile] = useState<TProfile | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({data: {session: _session}}) => {
-      if (!_session) {
-        setProfileLoading(false);
-        return supabase.auth.signOut();
-      }
-      setSession(_session);
-      supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', _session?.user.id)
-        .single()
-        .then(({data}) => {
+    supabase.auth
+      .getSession()
+      .then(({data: {session: _session}}) => {
+        if (!_session) return;
+        setSession(_session);
+        getProfile(_session.user.id).then(data => {
           if (!data) supabase.auth.signOut();
           setProfile(data as TProfile);
-          setProfileLoading(false);
         });
-    });
+      })
+      .catch(err => {
+        console.error(err);
+      })
+      .finally(() => {
+        setProfileLoading(false);
+      });
 
     supabase.auth.onAuthStateChange((_event, _session) => {
+      if (!_session) return;
       setSession(_session);
+      getProfile(_session.user.id).then(data => {
+        if (!data) supabase.auth.signOut();
+        setProfile(data as TProfile);
+      });
     });
   }, []);
 

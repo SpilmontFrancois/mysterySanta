@@ -15,7 +15,7 @@ type Props = {
   avatarUrl?: string;
 };
 
-const Avatar = ({userId, avatarUrl}: Props) => {
+const AvatarInput = ({userId, avatarUrl}: Props) => {
   const [avatarsUrls, setAvatarsUrls] = useState<TAvatarUrl[] | undefined>(
     undefined,
   );
@@ -121,4 +121,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Avatar;
+export default AvatarInput;
